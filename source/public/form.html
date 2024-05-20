@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Note App</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.min.js"
+          integrity="sha256-/PJBs6QWvXijOFIX04kZpLb6ZtSQckdOIavLWKKOgXU=" crossorigin="anonymous" defer></script>
+  <script src="scripts/index.js" type="module"></script>
+  <script src="scripts/todomodel.js" type="module"></script>
+
+  <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+<header>
+  <nav></nav>
+  <h1>Awesome ToDo-List</h1>
+  <button class="theme-toggle" id="theme-toggle">
+    <img class="theme-icon" src="assets/light_mode.svg" alt="Toggle Theme"/>
+  </button>
+</header>
+<main>
+  <div class="controller">
+    <h3>Create new ToDo</h3>
+    <div class="form-cont">
+      <form id="form" action="./index.html" action="POST">
+
+        <label for="title">Title</label>
+        <input id="title" type="text" name="title"/>
+
+        <label for="importance">Importance</label>
+        <!--<input id="importance" type="number" name="importance"/> -->
+
+        <select name="importance" id="importance">
+          <option value="1">low</option>
+          <option value="2">minor</option>
+          <option value="3">moderate</option>
+          <option value="4">significant</option>
+          <option value="5">critical</option>
+        </select>
+
+        <label for="dueDate">Due Date</label>
+        <input id="dueDate" type="date" name="dueDate"/>
+
+        <label for="finished">Finished</label>
+        <input id= "finished" type="checkbox" name="finished">
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description"></textarea>
+        <div>
+          <button type="submit" onclick=alert('Temp-Submitted-removeinline')>add</button>
+          <nav><a href="index.html"><button>cancel</button></a></nav>
+          <button>add and return</button>
+        </div>
+      </form>
+    </div>
+
+
+  </div>
+</main>
+<footer>
+  <p>&copy; Andi Eugster</p>
+</footer>
+</body>
+</html>

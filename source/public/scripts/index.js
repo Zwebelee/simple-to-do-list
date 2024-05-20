@@ -14,7 +14,8 @@ function createSampleToDos(todos){
   return todos.map(todo =>
     `<li>
       <h3>${todo.title}</h3>
-      <p>${todo.note}</p>
+      <p>${todo.description}</p>
+      <input type="checkbox" ${todo.finished ? "checked" : ""}/>
       </li>`
   ).join('');
 }
@@ -22,10 +23,20 @@ function createSampleToDos(todos){
 const todoListElement = document.querySelector("#todo-list")
 
 function renderTodoList(){
-  const todoList = createSampleToDos(todos);
-  todoListElement.innerHTML= todoList;
+  if (todoListElement){
+    todoListElement.innerHTML= createSampleToDos(todos);
+  }
 }
+
 
 renderTodoList()
 
+/** const form = document.querySelector("#form");
+
+if (form) {
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    alert("lalalala")
+  });
+} */
 
