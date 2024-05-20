@@ -9,3 +9,23 @@ themeToggle.addEventListener('click', () => {
     themeIcon.src = 'assets/light_mode.svg';
   }
 })
+
+function createSampleToDos(todos){
+  return todos.map(todo =>
+    `<li>
+      <h3>${todo.title}</h3>
+      <p>${todo.note}</p>
+      </li>`
+  ).join('');
+}
+
+const todoListElement = document.querySelector("#todo-list")
+
+function renderTodoList(){
+  const todoList = createSampleToDos(todos);
+  todoListElement.innerHTML= todoList;
+}
+
+renderTodoList()
+
+
