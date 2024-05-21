@@ -9,7 +9,8 @@ function compareTodosImportance(t1,t2){
   return t2.importance - t1.importance;
 }
 
-function todosImporanceSorted(){
-  return [...todos].sort(compareTodosImportance)
+function todosSorted() {
+  return [...todos].sort(compareTodosImportance);
 }
-console.log("removelater",todosImporanceSorted)
+
+export default {todos, todosSorted};

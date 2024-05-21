@@ -1,3 +1,5 @@
+import todoStore from './todo-store.js';
+
 // theme toggle
 const themeToggle = document.querySelector('.theme-toggle');
 const themeIcon = document.querySelector('.theme-icon')
@@ -24,7 +26,7 @@ const todoListElement = document.querySelector("#todo-list")
 
 function renderTodoList(){
   if (todoListElement){
-    todoListElement.innerHTML= createSampleToDos(todos);
+    todoListElement.innerHTML= createSampleToDos(todoStore.todosSorted());
   }
 }
 
