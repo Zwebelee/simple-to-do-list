@@ -26,8 +26,31 @@ const todoListElement = document.querySelector("#todo-list")
 
 function renderTodoList(){
   if (todoListElement){
-    todoListElement.innerHTML= createSampleToDos(todoStore.todosSorted());
+    todoListElement.innerHTML= createSampleToDos(todoStore.todosSortedBy('title'));
   }
+}
+
+// TODO -> imporve
+let isDescending = false;
+
+// TODO -> Bubble event for buttons so not needed on every button
+const importanceButton = document.querySelector("#importance-button");
+
+if (importanceButton) {
+importanceButton.addEventListener("click", () => {
+  const sortedTodos = todoStore.todosSortedBy('importance', isDescending ? 'asc' : 'desc');
+  todoListElement.innerHTML = createSampleToDos(sortedTodos);
+  isDescending = !isDescending;
+})}
+
+const titleButton = document.querySelector("#title-button");
+
+if(titleButton){
+  titleButton.addEventListener("click", () => {
+    const sortedTodos = todoStore.todosSortedBy('title', isDescending ? 'asc' : 'desc');
+    todoListElement.innerHTML = createSampleToDos(sortedTodos);
+    isDescending = !isDescending;
+  })
 }
 
 
