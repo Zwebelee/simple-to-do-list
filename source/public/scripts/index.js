@@ -1,32 +1,39 @@
-import todoStore from './todo-store.js';
+import todoStore from "./todo-store.js";
 
 // theme toggle
-const themeToggle = document.querySelector('.theme-toggle');
-const themeIcon = document.querySelector('.theme-icon')
+const themeToggle = document.querySelector(".theme-toggle");
+const themeIcon = document.querySelector(".theme-icon");
 
-themeToggle.addEventListener('click', () => {
-  if (themeIcon.src.includes('light_mode.svg')) {
-    themeIcon.src = 'assets/dark_mode.svg';
+themeToggle.addEventListener("click", () => {
+  if (themeIcon.src.includes("light_mode.svg")) {
+    themeIcon.src = "assets/dark_mode.svg";
+    document.body.classList.add("dark-theme");
   } else {
-    themeIcon.src = 'assets/light_mode.svg';
+    themeIcon.src = "assets/light_mode.svg";
+    document.body.classList.remove("dark-theme");
   }
-})
+});
 
-function createSampleToDos(todos){
-  return todos.map(todo =>
-    `<li>
+function createSampleToDos(todos) {
+  return todos
+    .map(
+      (todo) =>
+        `<li>
       <h3>${todo.title}</h3>
       <p>${todo.description}</p>
       <input type="checkbox" ${todo.finished ? "checked" : ""}/>
       </li>`
-  ).join('');
+    )
+    .join("");
 }
 
-const todoListElement = document.querySelector("#todo-list")
+const todoListElement = document.querySelector("#todo-list");
 
-function renderTodoList(){
-  if (todoListElement){
-    todoListElement.innerHTML= createSampleToDos(todoStore.todosSortedBy('title'));
+function renderTodoList() {
+  if (todoListElement) {
+    todoListElement.innerHTML = createSampleToDos(
+      todoStore.todosSortedBy("title")
+    );
   }
 }
 
@@ -37,24 +44,30 @@ let isDescending = false;
 const importanceButton = document.querySelector("#importance-button");
 
 if (importanceButton) {
-importanceButton.addEventListener("click", () => {
-  const sortedTodos = todoStore.todosSortedBy('importance', isDescending ? 'asc' : 'desc');
-  todoListElement.innerHTML = createSampleToDos(sortedTodos);
-  isDescending = !isDescending;
-})}
+  importanceButton.addEventListener("click", () => {
+    const sortedTodos = todoStore.todosSortedBy(
+      "importance",
+      isDescending ? "asc" : "desc"
+    );
+    todoListElement.innerHTML = createSampleToDos(sortedTodos);
+    isDescending = !isDescending;
+  });
+}
 
 const titleButton = document.querySelector("#title-button");
 
-if(titleButton){
+if (titleButton) {
   titleButton.addEventListener("click", () => {
-    const sortedTodos = todoStore.todosSortedBy('title', isDescending ? 'asc' : 'desc');
+    const sortedTodos = todoStore.todosSortedBy(
+      "title",
+      isDescending ? "asc" : "desc"
+    );
     todoListElement.innerHTML = createSampleToDos(sortedTodos);
     isDescending = !isDescending;
-  })
+  });
 }
 
-
-renderTodoList()
+renderTodoList();
 
 /** const form = document.querySelector("#form");
 
@@ -64,4 +77,3 @@ if (form) {
     alert("lalalala")
   });
 } */
-
