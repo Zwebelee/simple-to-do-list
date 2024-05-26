@@ -28,7 +28,7 @@
         <input id="title" type="text" name="title" required/>
 
         <label for="importance">Importance</label>
-        <!--<input id="importance" type="number" name="importance"/> -->
+        <!--<input id="importance" type="number" max="5" name="importance"/> -->
 
         <select name="importance" id="importance">
           <option value="1">low</option>
@@ -45,7 +45,7 @@
         <input id= "finished" type="checkbox" name="finished">
 
         <label for="description">Description</label>
-        <textarea id="description" name="description"></textarea>
+        <textarea id="description" name="description" maxlength="300"></textarea>
         <div>
           <button id= "form-submit" type="submit">add</button>
           <nav><a href="index.html"><button type="button">cancel</button></a></nav>

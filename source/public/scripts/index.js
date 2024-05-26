@@ -19,9 +19,11 @@ function createSampleToDos(todos) {
     .map(
       (todo) =>
         `<li>
+      <input type="checkbox" ${todo.finished ? "checked" : ""}/>
       <h3>${todo.title}</h3>
       <p>${todo.description}</p>
-      <input type="checkbox" ${todo.finished ? "checked" : ""}/>
+      <button type="button" class="button-edit" data-action="edit" data-todo-guid=${todo.guid}>edit</button>
+      <button type="button" class="button-delete" data-action="delete" data-todo-guid=${todo.guid}>delete</button>
       </li>`
     )
     .join("");
@@ -115,3 +117,35 @@ if (form) {
 
   });
 }
+
+
+todoListElement.addEventListener("click", event => {
+  console.log(event)
+  const {todoGuid, action} = event.target.dataset;
+  if(todoGuid) {
+    // TODO: refactor delete / edit to store or service
+    if(action ==="delete") {
+      console.log('delete')
+      
+      // delete via filter (does not mutate the array, thus slightly slower)
+      todoStore.todos = todoStore.todos.filter(todo => todo.guid !== todoGuid);
+      
+      /** // alternative delete via splice (mutates the array, thus faster on large arrays)
+      const todoIndex = todoStore.todos.findIndex(todo => todo.guid === todoGuid);
+      if (todoIndex !== -1) {
+        todoStore.todos.splice(todoIndex, 1);
+      } */
+      
+      // save the updated todos array to localStorage
+      localStorage.setItem('simple-todos', JSON.stringify(todoStore.todos));
+
+      // Update the UI
+      renderTodoList();
+
+
+    } else if (action === "edit") {
+      console.log('edit')
+    }
+  }
+
+});
