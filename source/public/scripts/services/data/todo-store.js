@@ -1,9 +1,15 @@
-const todos = [
-  {id: '01', title: 'SampleToDo', description: 'something todo', dueDate:'', importance:3, finished: false},
-  {id: '02', title: 'SampleElseToDo', description: 'something else todo', dueDate:'', importance:1,finished: false},
-  {id: '03', title: 'Dont forget', description: 'i forgot', dueDate:'', importance:4,finished: true},
-  {id: '04', title: 'A thing i need to do', description: 'something todo123', dueDate:'', importance:4,finished: false}
-];
+let todos = JSON.parse(localStorage.getItem('simple-todos'));
+
+if (!todos) {
+  // load sample todos
+  todos = [
+    {id: '01', title: 'SampleToDo', description: 'something todo', dueDate:'', importance:3, finished: false},
+    {id: '02', title: 'SampleElseToDo', description: 'something else todo', dueDate:'', importance:1,finished: false},
+    {id: '03', title: 'Dont forget', description: 'i forgot', dueDate:'', importance:4,finished: true},
+    {id: '04', title: 'A thing i need to do', description: 'something todo123', dueDate:'', importance:4,finished: false}
+  ];
+  localStorage.setItem('simple-todos', JSON.stringify(todos));
+}
 
 function compareTodosById(t1,t2){
   return t1.id.localeCompare(t2.id)
