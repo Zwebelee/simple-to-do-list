@@ -69,11 +69,49 @@ if (titleButton) {
 
 renderTodoList();
 
-/** const form = document.querySelector("#form");
+const form = document.querySelector("#form");
+const titleInput = document.querySelector("#title");
+const importanceInput = document.querySelector("#importance");
+const dueDateInput = document.querySelector("#dueDate");
+const finishedInput = document.querySelector("#finished");
+const descriptionInput = document.querySelector("#description");
 
 if (form) {
   form.addEventListener("submit", event => {
     event.preventDefault();
-    alert("lalalala")
+
+    const ids = todoStore.todos.map(todo => todo.id);
+
+    // Find the maximum id
+    const maxId = Math.max(...ids);
+
+    // Create a new todolist-object
+    const newTodo = {
+      guid: crypto.randomUUID(),
+      id: maxId+1,
+      title: titleInput.value,
+      importance: importanceInput.value,
+      dueDate: dueDateInput.value,
+      finished: finishedInput.checked,
+      description: descriptionInput.value
+    };
+
+
+    // Push the new to-do to the todos array
+    todoStore.todos.push(newTodo);
+
+    // Save the updated todos array to localStorage
+    localStorage.setItem('simple-todos', JSON.stringify(todoStore.todos));
+
+    // Clear the form fields
+    titleInput.value = '';
+    importanceInput.value = '';
+    dueDateInput.value = '';
+    finishedInput.checked = false;
+    descriptionInput.value = '';
+
+    // Update the UI
+    renderTodoList();
+
   });
-} */
+}

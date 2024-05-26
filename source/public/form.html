@@ -25,7 +25,7 @@
       <form id="form" action="./index.html" action="POST">
 
         <label for="title">Title</label>
-        <input id="title" type="text" name="title"/>
+        <input id="title" type="text" name="title" required/>
 
         <label for="importance">Importance</label>
         <!--<input id="importance" type="number" name="importance"/> -->
@@ -47,8 +47,8 @@
         <label for="description">Description</label>
         <textarea id="description" name="description"></textarea>
         <div>
-          <button type="submit" onclick=alert('Temp-Submitted-removeinline')>add</button>
-          <nav><a href="index.html"><button>cancel</button></a></nav>
+          <button id= "form-submit" type="submit">add</button>
+          <nav><a href="index.html"><button type="button">cancel</button></a></nav>
           <button>add and return</button>
         </div>
       </form>
