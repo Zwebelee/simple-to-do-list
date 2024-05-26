@@ -3,6 +3,7 @@
     --secondary: #0ff;
     --light: #eee;
     --dark: #313154;
+    --danger: #ff5b57;
 }
 
 * {
@@ -17,6 +18,99 @@ body {
 body.dark-theme {
     background: var(--dark);
     color: var(--light);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+main {
+    border-style: solid;
+    border-color: black;
+}
+
+.header-buttons {
+    display:flex;
+    gap: 0.5rem;
+}
+
+.controller {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+}
+
+.todo-grid-status {
+    grid-area: status;
+}
+
+.todo-grid-duedate {
+    grid-area: duedate;
+}
+
+.todo-grid-title {
+    grid-area: title;
+}
+
+.todo-grid-description {
+    grid-area: description;
+}
+
+.todo-grid-importance {
+    grid-area: importance;
+}
+
+.todo-grid-edit {
+    grid-area: edit;
+}
+
+.todo-grid-delete {
+    grid-area: delete;
+}
+
+.todo-list-item {
+    display: grid;
+    grid-template:
+            "status title importance edit delete"
+            "duedate description description description description";
+    gap: 1rem;
+    align-items: center;
+
+}
+
+/** .todo-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.todo-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+    margin-bottom: 1rem;
+} */
+
+button {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    color: var(--primary);
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+button:hover {
+    opacity: 0.5;
+}
+
+.todo-list-item .button-delete {
+    background-color: var(--danger);
 }
 
 .theme-icon {

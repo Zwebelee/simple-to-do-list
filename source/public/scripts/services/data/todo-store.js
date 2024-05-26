@@ -33,6 +33,9 @@ function compareTodosImportance(t1,t2){
   return t2.importance - t1.importance;
 }
 
+/** function deleteTodoByGuid(guid){
+  this.todos = this.todos.filter(todo => todo.guid !== guid);
+} */
 
 function todosSortedBy(field, order='asc') {
   let compareFunction;

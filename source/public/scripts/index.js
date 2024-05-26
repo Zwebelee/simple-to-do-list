@@ -18,13 +18,28 @@ function createSampleToDos(todos) {
   return todos
     .map(
       (todo) =>
-        `<li>
-      <input type="checkbox" ${todo.finished ? "checked" : ""}/>
-      <h3>${todo.title}</h3>
-      <p>${todo.description}</p>
-      <button type="button" class="button-edit" data-action="edit" data-todo-guid=${todo.guid}>edit</button>
-      <button type="button" class="button-delete" data-action="delete" data-todo-guid=${todo.guid}>delete</button>
-      </li>`
+        `<li class="todo-list-item">
+            <div class="todo-grid-status">
+              <input type="checkbox" ${todo.finished ? "checked" : ""}/>
+            </div>
+            <div class="todo-grid-duedate">
+              <p>${todo.dueDate}</p>
+            </div>
+            <div class="todo-grid-title"><h3>${todo.title}</h3></div>
+            <div class="todo-grid-description"><p>${todo.description}</p></div>
+            <div class="todo-grid-importance">
+              <span class="importance-${todo.importance}">${todo.importance}</span>
+            </div>
+            <div class="todo-grid-edit">
+            <button type="button" class="button-edit" data-action="edit" data-todo-guid=${todo.guid}>Edit</button>
+            </div>
+            <div class="todo-grid-delete">
+              <button type="button" class="button-delete" data-action="delete" data-todo-guid=${todo.guid}>
+                <img class="delete-icon" src="assets/delete.svg" alt="Delete" />
+              </button>
+            </div>
+          </div>
+        </li>`
     )
     .join("");
 }
@@ -71,52 +86,7 @@ if (titleButton) {
 
 renderTodoList();
 
-const form = document.querySelector("#form");
-const titleInput = document.querySelector("#title");
-const importanceInput = document.querySelector("#importance");
-const dueDateInput = document.querySelector("#dueDate");
-const finishedInput = document.querySelector("#finished");
-const descriptionInput = document.querySelector("#description");
 
-if (form) {
-  form.addEventListener("submit", event => {
-    event.preventDefault();
-
-    const ids = todoStore.todos.map(todo => todo.id);
-
-    // Find the maximum id
-    const maxId = Math.max(...ids);
-
-    // Create a new todolist-object
-    const newTodo = {
-      guid: crypto.randomUUID(),
-      id: maxId+1,
-      title: titleInput.value,
-      importance: importanceInput.value,
-      dueDate: dueDateInput.value,
-      finished: finishedInput.checked,
-      description: descriptionInput.value
-    };
-
-
-    // Push the new to-do to the todos array
-    todoStore.todos.push(newTodo);
-
-    // Save the updated todos array to localStorage
-    localStorage.setItem('simple-todos', JSON.stringify(todoStore.todos));
-
-    // Clear the form fields
-    titleInput.value = '';
-    importanceInput.value = '';
-    dueDateInput.value = '';
-    finishedInput.checked = false;
-    descriptionInput.value = '';
-
-    // Update the UI
-    renderTodoList();
-
-  });
-}
 
 
 todoListElement.addEventListener("click", event => {
@@ -128,7 +98,7 @@ todoListElement.addEventListener("click", event => {
       console.log('delete')
       
       // delete via filter (does not mutate the array, thus slightly slower)
-      todoStore.todos = todoStore.todos.filter(todo => todo.guid !== todoGuid);
+     todoStore.todos = todoStore.todos.filter(todo => todo.guid !== todoGuid);
       
       /** // alternative delete via splice (mutates the array, thus faster on large arrays)
       const todoIndex = todoStore.todos.findIndex(todo => todo.guid === todoGuid);
@@ -145,6 +115,8 @@ todoListElement.addEventListener("click", event => {
 
     } else if (action === "edit") {
       console.log('edit')
+      window.location.href = `form.html?guid=${todoGuid}`;
+
     }
   }
 
