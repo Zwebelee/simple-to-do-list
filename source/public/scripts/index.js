@@ -1,4 +1,4 @@
-import todoStore from "./todo-store.js";
+import todoStore from "./services/data/todo-store.js";
 
 // theme toggle
 const themeToggle = document.querySelector(".theme-toggle");
