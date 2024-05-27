@@ -4,6 +4,7 @@
     --light: #eee;
     --dark: #313154;
     --danger: #ff5b57;
+    --shadow: 0 1px 3px rgb(0 0 0 / 10%);
 }
 
 * {
@@ -32,7 +33,7 @@ main {
 }
 
 .header-buttons {
-    display:flex;
+    display: flex;
     gap: 0.5rem;
 }
 
@@ -75,27 +76,21 @@ main {
 .todo-list-item {
     display: grid;
     grid-template:
-            "status title importance edit delete"
-            "duedate description description description description";
-    gap: 1rem;
+        "status title importance edit delete"
+        "duedate description description description description"
+        / 8rem 1fr 5rem auto auto;
+    gap: 0.5rem;
     align-items: center;
-
-}
-
-/** .todo-list {
-    display: flex;
-    flex-direction: column;
-}
-
-.todo-list-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background-color: #fff;
     padding: 1rem;
     border-radius: 0.5rem;
-    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+    box-shadow: var(--shadow);
     margin-bottom: 1rem;
-} */
+}
+
+.todo-list {
+    padding: 1rem;
+}
 
 button {
     padding: 0.5rem;
