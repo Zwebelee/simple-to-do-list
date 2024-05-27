@@ -1,4 +1,4 @@
-import todoStore from "./services/data/todo-store.js";
+import todoStore from "./services/stores/todo-store.js";
 
 window.onload = function(){
   const urlParams = new URLSearchParams(window.location.search);
