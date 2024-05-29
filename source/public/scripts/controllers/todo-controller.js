@@ -38,6 +38,16 @@ export default class TodoController {
         event.target.dataset.sortorder = sortorder === 'asc' ? 'desc' : 'asc'; // TODO how to fix ES LINT ?
       }
     });
+    
+    const filterButton = document.querySelector('.filters');
+    filterButton.addEventListener('click', (event) => {
+      const {state} = event.target.dataset
+      const newState = state === 'off' ? 'on' : 'off';
+      this.todoStore.filter(newState);
+      this.renderTodos();
+
+      event.target.dataset.state = newState;
+    });
 
   }
 

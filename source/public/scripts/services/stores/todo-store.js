@@ -112,6 +112,15 @@ export class TodoStore {
     this.visibleItems = sortedTodos;
   }
 
+  filter(state){
+    if(state === 'off'){
+      this.visibleItems = this.todos
+    } else if (state === 'on'){
+      this.visibleItems = this.todos.filter(todo => !todo.finished)
+    } else {
+    throw new Error(`Invalid state: ${state}`)
+    }
+  }
 }
 
 export default new TodoStore();
