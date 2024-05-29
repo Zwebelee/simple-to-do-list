@@ -5,9 +5,8 @@
   <title>Note App</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.min.js"
           integrity="sha256-/PJBs6QWvXijOFIX04kZpLb6ZtSQckdOIavLWKKOgXU=" crossorigin="anonymous" defer></script>
-  <script src="scripts/index.js" type="module"></script>
-  <script src="scripts/services/stores/todo-store.js" type="module"></script>
 
+  <script src="scripts/controllers/todo-controller.js" type="module"></script>
   <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
@@ -32,10 +31,10 @@
 <main>
   <div class="controller">
     <div class="sorters">
-      <button id="title-button">Name</button>
-      <button>Date</button>
-      <button>Created</button>
-      <button id="importance-button">Importance</button>
+      <button type="button" id="title-button" data-field= "title" data-sortorder="desc">Name</button>
+      <button type="button" id="dueDate-button" data-field= "dueDate" data-sortorder="desc" >Due</button>
+      <button type="button" id="createdAt-button" data-field= "id" data-sortorder="desc">Created</button>
+      <button type="button" id="importance-button" data-field= "importance" data-sortorder="desc">Importance</button>
     </div>
     <div class="filters">
       <button>Filter</button>

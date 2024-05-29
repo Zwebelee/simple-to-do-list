@@ -50,60 +50,56 @@ export class TodoStore {
           "guid": "286f4fb8-1ef3-429a-952d-baa47b894d47"
         }
       ]
-      todos = sampleTodos.map(({id, title, description, dueDate, importance, finished, guid}) => new Todo(id, title, description, dueDate, importance, finished, guid));
+      todos = sampleTodos.map(({
+                                 id,
+                                 title,
+                                 description,
+                                 dueDate,
+                                 importance,
+                                 finished,
+                                 guid
+                               }) => new Todo(id, title, description, dueDate, importance, finished, guid));
       localStorage.setItem('simple-todos', JSON.stringify(todos));
+      this.sort('id')
     }
     this.todos = todos;
-    this.visibleItems = this.todosSortedBy('id','desc');
+    this.visibleItems = null;
+    this.sort('id', 'desc');
   }
 
-  // TODO: generalize compare function + fix eslin (this needed?!)
-  compareTodosById(t1,t2){
-    return t1.id.localeCompare(t2.id)
-  }
+  sort(field, order = 'asc') {
 
-  compareTodosByTitle(t1,t2){
-    return t1.title.localeCompare(t2.title)
-  }
+    function compareText(a, b) {
+      return a[field].localeCompare(b[field])
+    }
 
-  compareTodosByDescription(t1,t2){
-    return t1.description.localeCompare(t2.description)
-  }
+    function compareNumber(a, b) {
+      return a[field] - b[field]
+    }
 
-  compareTodosByDueDate(t1,t2){
-    // TODO
-    console.error('not implemented yet')
-    return t1.id.localeCompare(t2.id)
-  }
+    function compareDates(a, b) {
+      return new Date(a[field]) - new Date(b[field])
+    }
 
-  compareTodosImportance(t1,t2){
-    return t2.importance - t1.importance;
-  }
-
-  //TODO Implement
-  /** function deleteTodoByGuid(guid){
-   this.todos = this.todos.filter(todo => todo.guid !== guid);
-   } */
-
-  todosSortedBy(field, order='asc') {
     let compareFunction;
 
     switch (field) {
       case 'id':
-        compareFunction = this.compareTodosById;
+        compareFunction = compareNumber;
         break;
       case 'title':
-        compareFunction = this.compareTodosByTitle;
+        compareFunction = compareText;
         break;
       case 'description':
-        compareFunction = this.compareTodosByDescription;
+        compareFunction = compareText;
         break;
       case 'dueDate':
-        compareFunction = this.compareTodosByDueDate;
+        compareFunction = compareDates;
         break;
       case 'importance':
-        compareFunction = this.compareTodosImportance;
+        compareFunction = compareNumber;
         break;
+
       default:
         throw new Error(`Invalid field: ${field}`);
     }
@@ -113,9 +109,9 @@ export class TodoStore {
     if (order === 'desc') {
       sortedTodos.reverse();
     }
-
-    return sortedTodos;
+    this.visibleItems = sortedTodos;
   }
+
 }
 
 export default new TodoStore();

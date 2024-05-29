@@ -1,32 +1,49 @@
 import {TodoStore} from "../services/stores/todo-store.js";
-// TODO: fix default import ( export default class TodoController
-export class TodoController {
+
+export default class TodoController {
   constructor() {
     this.todoStore = new TodoStore();
 
+    this.body = document.body;
     this.themeToggle = document.querySelector(".theme-toggle");
     this.themeIcon = document.querySelector(".theme-icon");
     this.todoListElement = document.querySelector("#todo-list");
+    this.titleButton = document.querySelector("#title-button");
 
   }
 
   toggleTheme() {
-    document.body.classList.toggle("dark-theme");
+    this.body.classList.toggle("dark-theme");
   }
 
-  initEventHandlers(){
+  initEventHandlers() {
+    // TODO -> event handlers einzelne auslagern ?! sonst hier riesen funktion
     this.themeToggle.addEventListener("click", () => {
       this.toggleTheme();
-      if(document.body.classList.contains("dark-theme")){
+      if (document.body.classList.contains("dark-theme")) {
         this.themeIcon.src = "assets/dark_mode.svg";
       } else {
         this.themeIcon.src = "assets/light_mode.svg";
       }
     });
+
+
+    const sorterDiv = document.querySelector('.sorters');
+    sorterDiv.addEventListener('click', (event) => {
+      if(event.target.tagName === 'BUTTON') {
+        const { field, sortorder } = event.target.dataset;
+        const order = event.target.dataset.sortorder;
+        this.todoStore.sort(field,order);
+        this.renderTodos();
+        event.target.dataset.sortorder = sortorder === 'asc' ? 'desc' : 'asc'; // TODO how to fix ES LINT ?
+      }
+    });
+
   }
 
-  createTodos(todos){
-    return todos
+
+  createTodos(){
+    return this.todoStore.visibleItems
       .map(
         (todo) =>
           `<li class="todo-list-item">
@@ -56,9 +73,7 @@ export class TodoController {
   }
 
   renderTodos(){
-    this.todoListElement.innerHTML = this.createTodos(
-      this.todoStore.visibleItems
-    );
+    this.todoListElement.innerHTML = this.createTodos();
   }
 
   initialize(){
