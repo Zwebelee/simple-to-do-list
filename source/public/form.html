@@ -3,12 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Note App</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.min.js"
-          integrity="sha256-/PJBs6QWvXijOFIX04kZpLb6ZtSQckdOIavLWKKOgXU=" crossorigin="anonymous" defer></script>
-  <script src="scripts/index.js" type="module"></script>
-  <script src="scripts/form.js" type="module"></script>
-  <script src="scripts/services/stores/todo-store.js" type="module"></script>
-
+  <script src="scripts/controllers/form-controller.js" type="module"></script>
   <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
@@ -20,17 +15,21 @@
   </button>
 </header>
 <main>
-  <div class="controller">
+  <div class="form-controller">
+    <div class="flex-row form-head">
     <h3>Create new ToDo</h3>
-    <div class="form-cont">
-      <form id="form" action="./index.html" action="POST">
+    <nav><a href="index.html"><button class="cancel" type="button">cancel</button></a></nav>
+    </div>
+    <div class="form-container">
 
+      <form id="form" action="./index.html" action="POST">
+        <div class="form-row">
         <label for="title">Title</label>
         <input id="title" type="text" name="title" required/>
-
+        </div>
+        <div class="form-row">
         <label for="importance">Importance</label>
         <!--<input id="importance" type="number" max="5" name="importance"/> -->
-
         <select name="importance" id="importance">
           <option value="1">low</option>
           <option value="2">minor</option>
@@ -38,19 +37,23 @@
           <option value="4">significant</option>
           <option value="5">critical</option>
         </select>
+          </div>
 
+            <div class="form-row">
         <label for="dueDate">Due Date</label>
         <input id="dueDate" type="date" name="dueDate"/>
-
+            </div>
+        <div class="form-row">
         <label for="finished">Finished</label>
         <input id= "finished" type="checkbox" name="finished">
-
+        </div>
+        <div class="form-row">
         <label for="description">Description</label>
         <textarea id="description" name="description" maxlength="300"></textarea>
-        <div>
+        </div>
+        <div class="form-row-submitting">
           <button id= "form-submit" type="submit">add</button>
-          <nav><a href="index.html"><button type="button">cancel</button></a></nav>
-          <button>add and return</button>
+          <button class="addAndCancel">add and return</button>
         </div>
       </form>
     </div>

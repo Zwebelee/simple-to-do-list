@@ -119,3 +119,44 @@ button:hover {
 .home-icon {
     filter: invert(1);
 }
+
+.form-controller {
+    display: flex;
+    flex-flow: column;
+    flex-wrap: wrap;
+    padding: 1rem;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+form {
+    display: flex;
+    flex-flow: column;
+    flex-wrap: wrap;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.form-head {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.form-row-submitting {
+    display: flex;
+    justify-content: flex-end;
+}
