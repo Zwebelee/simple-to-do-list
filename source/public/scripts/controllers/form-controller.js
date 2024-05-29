@@ -36,8 +36,8 @@ export default class FormController {
   }
 
   formCancel() {
-    const cancleButtons = document.querySelector(".addAndCancel");
-    cancleButtons.addEventListener("click", (event) => {
+    const cancelButtons = document.querySelector(".addAndCancel");
+    cancelButtons.addEventListener("click", (event) => {
       event.preventDefault();
       this.handleSubmit(event);
       window.location.href = "index.html";
