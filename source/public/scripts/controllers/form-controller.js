@@ -1,7 +1,10 @@
 import todoStore from "../services/stores/todo-store.js";
+import ThemeController from "../utils/themecontroll.js";
 
 export default class FormController {
   constructor() {
+    this.themeController = new ThemeController();
+
     this.form = document.querySelector("#form");
     this.titleInput = document.querySelector("#title");
     this.importanceInput = document.querySelector("#importance");
@@ -13,6 +16,7 @@ export default class FormController {
 
   initialize() {
     window.onload = this.populateForm.bind(this);
+    this.themeController.initialize();
     this.formCancel();
     if (this.form) {
       this.form.addEventListener("submit", this.handleSubmit.bind(this));
