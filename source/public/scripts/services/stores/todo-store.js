@@ -2,101 +2,47 @@ import { Todo } from "../models/todo.js";
 
 export class TodoStore {
   constructor() {
-    let todos = JSON.parse(localStorage.getItem('simple-todos'));
-    if (!todos) {
-      // fetch('scripts/services/data/sample-todos.json')
-      //   .then(response => response.json())
-      //   .then(data =>{
-      //     todos = data['sample-todos'].map(todoData => new Todo(todoData));
-      //     localStorage.setItem('simple-todos', JSON.stringify(todos))
-      //   })
-      //   .catch(error => console.error('Error loading sample todos', error));
-
-      const sampleTodos = [
-        {
-          "id": 1,
-          "title": "SampleToDo",
-          "description": "something todo",
-          "dueDate": "2024-05-02",
-          "importance": 3,
-          "finished": false,
-          "guid": "6290969e-e73d-487d-8eb4-acb490e0a5fe"
-        },
-        {
-          "id": 2,
-          "title": "SampleElseToDo",
-          "description": "something else todo",
-          "dueDate": "2024-05-12",
-          "importance": 1,
-          "finished": false,
-          "guid": "c3491f73-3f4d-4dd8-a45b-79cbcc77d623"
-        },
-        {
-          "id": 3,
-          "title": "Dont forget",
-          "description": "i forgot",
-          "dueDate": "2024-05-02",
-          "importance": 4,
-          "finished": true,
-          "guid": "50736f1d-5566-49ad-9f02-61608982a671"
-        },
-        {
-          "id": 4,
-          "title": "A thing i need to do",
-          "description": "something todo123",
-          "dueDate": "2024-03-18",
-          "importance": 4,
-          "finished": false,
-          "guid": "286f4fb8-1ef3-429a-952d-baa47b894d47"
-        }
-      ]
-      todos = sampleTodos.map(({
-                                 id,
-                                 title,
-                                 description,
-                                 dueDate,
-                                 importance,
-                                 finished,
-                                 guid
-                               }) => new Todo(id, title, description, dueDate, importance, finished, guid));
-      localStorage.setItem('simple-todos', JSON.stringify(todos));
-      this.sort('id')
+    const todos = JSON.parse(localStorage.getItem("simple-todos"));
+    if (todos) {
+      this.todos = todos;
+      this.visibleItems = todos;
+      this.sort("id", "desc");
+    } else {
+      this.todos = [];
+      this.visibleItems = [];
+      this.loadSampleTodos();
     }
-    this.todos = todos;
-    this.visibleItems = null;
-    this.sort('id', 'desc');
   }
 
-  sort(field, order = 'asc') {
-
+  sort(field, order = "asc") {
     function compareText(a, b) {
-      return a[field].localeCompare(b[field])
+      return a[field].localeCompare(b[field]);
     }
 
     function compareNumber(a, b) {
-      return a[field] - b[field]
+      return a[field] - b[field];
     }
 
     function compareDates(a, b) {
-      return new Date(a[field]) - new Date(b[field])
+      return new Date(a[field]) - new Date(b[field]);
     }
 
     let compareFunction;
 
     switch (field) {
-      case 'id':
+      case "id":
         compareFunction = compareNumber;
         break;
-      case 'title':
+      case "title":
         compareFunction = compareText;
         break;
-      case 'description':
+      case "description":
         compareFunction = compareText;
         break;
-      case 'dueDate':
+      case "dueDate":
         compareFunction = compareDates;
         break;
-      case 'importance':
+      case "importance":
         compareFunction = compareNumber;
         break;
 
@@ -106,20 +52,72 @@ export class TodoStore {
 
     const sortedTodos = [...this.todos].sort(compareFunction);
 
-    if (order === 'desc') {
+    if (order === "desc") {
       sortedTodos.reverse();
     }
     this.visibleItems = sortedTodos;
   }
 
-  filter(state){
-    if(state === 'off'){
-      this.visibleItems = this.todos
-    } else if (state === 'on'){
-      this.visibleItems = this.todos.filter(todo => !todo.finished)
+  filter(state) {
+    if (state === "off") {
+      this.visibleItems = this.todos;
+    } else if (state === "on") {
+      this.visibleItems = this.todos.filter((todo) => !todo.finished);
     } else {
-    throw new Error(`Invalid state: ${state}`)
+      throw new Error(`Invalid state: ${state}`);
     }
+  }
+
+  getTodo(guid) {
+    const targetTodo = this.todos.find((todo) => todo.guid === guid);
+    if (!targetTodo) {
+      window.alert("Not a valid guid for this todo");
+    }
+    return targetTodo;
+  }
+
+  // addTodo() {}
+
+  // updateTodo(guid) {}
+
+  deleteTodo(guid) {
+    return new Promise((resolve, reject) => {
+      const targetTodo = this.todos.find((todo) => todo.guid === guid);
+      if (targetTodo) {
+        this.todos = this.todos.filter((todo) => todo.guid !== guid);
+        this.visibleItems = this.todos;
+        localStorage.setItem("simple-todos", JSON.stringify(this.todos));
+        resolve();
+      } else {
+        reject(new Error("Not a valid guid for this todo"));
+      }
+    });
+  }
+  // TODO make it private to todostore, only in constructor.
+
+  loadSampleTodos() {
+    fetch("scripts/services/data/todo-sample-data.json")
+      .then((response) => response.json())
+      .then((data) => {
+        const sampleTodoData = data["sample-todos"];
+        const sampleTodos = sampleTodoData.map(
+          ({ id, title, description, dueDate, importance, finished, guid }) =>
+            new Todo(
+              id,
+              title,
+              description,
+              dueDate,
+              importance,
+              finished,
+              guid
+            )
+        );
+        this.todos = sampleTodods;
+        localStorage.setItem("simple-todos", JSON.stringify(sampleTodos));
+        this.sort("id");
+        this.sort("id", "desc");
+      })
+      .catch((error) => console.error("Error loading sample todos", error));
   }
 }
 

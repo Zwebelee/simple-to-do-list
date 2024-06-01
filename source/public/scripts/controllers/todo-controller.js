@@ -48,7 +48,62 @@ export default class TodoController {
 
       event.target.dataset.state = newState;
     });
+
+    this.todoListElement.addEventListener("click", (event) => {
+      const targetButton = event.target.closest("button");
+      if (!targetButton) {
+        return;
+      }
+      const { todoGuid, action } = targetButton.dataset;
+      if (action === "delete") {
+        this.todoStore
+          .deleteTodo(todoGuid)
+          .then(() => {
+            this.renderTodos();
+          })
+          .catch((rejection) => {
+            window.alert(rejection);
+          });
+      } else if (action === "edit") {
+        window.location.href = `form.html?guid=${todoGuid}`;
+      }
+    });
   }
+
+  /**
+   * const todoListElement = document.querySelector("#todo-list");
+   * todoListElement.addEventListener("click", event => {
+  console.log(event)
+  const {todoGuid, action} = event.target.dataset;
+if(todoGuid) {
+  // TODO: refactor delete / edit to store or service
+  if(action ==="delete") {
+    console.log('delete')
+
+    // delete via filter (does not mutate the array, thus slightly slower)
+    todoStore.todos = todoStore.todos.filter(todo => todo.guid !== todoGuid);
+
+    //// alternative delete via splice (mutates the array, thus faster on large arrays)
+    // const todoIndex = todoStore.todos.findIndex(todo => todo.guid === todoGuid);
+     //if (todoIndex !== -1) {
+    //todoStore.todos.splice(todoIndex, 1);
+    // }
+
+    // save the updated todos array to localStorage
+    localStorage.setItem('simple-todos', JSON.stringify(todoStore.todos));
+
+    // Update the UI
+    renderTodoList();
+
+
+  } else if (action === "edit") {
+    console.log('edit')
+    window.location.href = `form.html?guid=${todoGuid}`;
+
+  }
+}
+
+}); */
 
   createTodos() {
     return this.todoStore.visibleItems
