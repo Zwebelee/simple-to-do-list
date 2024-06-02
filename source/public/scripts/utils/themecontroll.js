@@ -3,6 +3,7 @@ export default class ThemeController {
     this.body = document.body;
     this.themeToggle = document.querySelector(".theme-toggle");
     this.themeIcon = document.querySelector(".theme-icon");
+    this.partyTimer = null;
   }
 
   toggleTheme() {
@@ -30,5 +31,18 @@ export default class ThemeController {
   initialize() {
     this.applyTheme();
     this.themeToggle.addEventListener("click", () => this.toggleTheme());
+
+    this.themeToggle.addEventListener("mouseover", () => {
+      this.partyTimer = setTimeout(() => {
+        this.body.classList.add("party");
+      }, 3000);
+    })
+
+    this.themeToggle.addEventListener("mouseout", () => {
+      clearTimeout(this.partyTimer);
+      this.body.classList.remove("party");
+    });
+
+
   }
 }
