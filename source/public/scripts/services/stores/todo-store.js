@@ -2,16 +2,19 @@ import { Todo } from "../models/todo.js";
 
 export class TodoStore {
   constructor() {
-    const todos = JSON.parse(localStorage.getItem("simple-todos"));
-    if (todos) {
-      this.todos = todos;
-      this.visibleItems = todos;
-      this.sort("id", "desc");
-    } else {
-      this.todos = [];
-      this.visibleItems = [];
-      this.loadSampleTodos();
-    }
+    this.ready = new Promise((resolve) => {
+      const todos = JSON.parse(localStorage.getItem("simple-todos"));
+      if (todos) {
+        this.todos = todos;
+        this.visibleItems = todos;
+        this.sort("id", "desc");
+        resolve();
+      } else {
+        this.todos = [];
+        this.visibleItems = [];
+        this.loadSampleTodos().then(resolve);
+      }
+    });
   }
 
   sort(field, order = "asc") {
@@ -137,7 +140,7 @@ export class TodoStore {
   }
 
   loadSampleTodos() {
-    fetch("scripts/services/data/todo-sample-data.json")
+    return fetch("scripts/services/data/todo-sample-data.json")
       .then((response) => response.json())
       .then((data) => {
         const sampleTodoData = data["sample-todos"];

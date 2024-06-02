@@ -113,7 +113,7 @@ if(todoGuid) {
                 <input type="checkbox" ${todo.finished ? "checked" : ""}/>
               </div>
               <div class="todo-grid-duedate">
-                <p>${todo.dueDate}</p>
+                <p>${todo.dueDate ? todo.dueDate : ""}</p>
               </div>
               <div class="todo-grid-title"><h3>${todo.title}</h3></div>
               <div class="todo-grid-description"><p>${
@@ -146,9 +146,10 @@ if(todoGuid) {
     this.todoListElement.innerHTML = this.createTodos();
   }
 
-  initialize() {
+  async initialize() {
     this.initEventHandlers();
     this.themeController.initialize();
+    await this.todoStore.ready;
     this.renderTodos();
   }
 }
