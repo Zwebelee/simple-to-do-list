@@ -45,6 +45,20 @@ main {
     padding: 1rem;
 }
 
+.sorters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.sortbutton.active[data-sortorder="asc"]::after {
+    content: "▲";
+}
+
+.sortbutton.active[data-sortorder="desc"]::after {
+    content: "▼";
+}
+
 .todo-grid-status {
     grid-area: status;
 }

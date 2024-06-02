@@ -11,6 +11,7 @@ export default class TodoController {
     this.themeIcon = document.querySelector(".theme-icon");
     this.todoListElement = document.querySelector("#todo-list");
     this.titleButton = document.querySelector("#title-button");
+    this.sortersContainer = document.querySelector(".sorters");
   }
 
   /** toggleTheme() {
@@ -30,11 +31,16 @@ export default class TodoController {
     const sorterDiv = document.querySelector(".sorters");
     sorterDiv.addEventListener("click", (event) => {
       if (event.target.tagName === "BUTTON") {
-        const { field, sortorder } = event.target.dataset;
+        const { field, sortorder} = event.target.dataset;
         const order = event.target.dataset.sortorder;
+
+        const sortButtons = document.querySelectorAll(".sortbutton");
+        sortButtons.forEach((button) => {button. classList.remove("active")});
+
+        event.target.classList.add("active");
         this.todoStore.sort(field, order);
-        this.renderTodos();
         event.target.dataset.sortorder = sortorder === "asc" ? "desc" : "asc"; // TODO how to fix ES LINT ?
+        this.renderTodos();
       }
     });
 
@@ -104,6 +110,22 @@ if(todoGuid) {
 
 }); */
 
+  createSortButtons() {
+    const sortButtons = [
+      { field: "title", alias: "Title", sortorder: "desc" },
+      { field: "dueDate", alias: "Date", sortorder: "desc" },
+      { field: "createdAt", alias: "Created", sortorder: "desc" },
+      { field: "importance", alias: "Importance", sortorder: "desc" }
+    ];
+
+    const buttonsHtml = sortButtons.map(
+      (props) =>
+        `<button class="sortbutton" type="button" id="${props.field}-button" data-field="${props.field}" data-sortorder="${props.sortorder}">${props.alias}</button>`
+    )
+      .join("");
+    return buttonsHtml;
+  }
+
   createTodos() {
     return this.todoStore.visibleItems
       .map(
@@ -146,11 +168,16 @@ if(todoGuid) {
     this.todoListElement.innerHTML = this.createTodos();
   }
 
+  renderSortButtons() {
+    this.sortersContainer.innerHTML = this.createSortButtons();
+  }
+
   async initialize() {
     this.initEventHandlers();
     this.themeController.initialize();
     await this.todoStore.ready;
     this.renderTodos();
+    this.renderSortButtons();
   }
 }
 

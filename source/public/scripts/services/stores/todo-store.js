@@ -19,7 +19,7 @@ export class TodoStore {
 
   sort(field, order = "asc") {
     function compareText(a, b) {
-      return a[field].localeCompare(b[field]);
+      return b[field].localeCompare(a[field]);
     }
 
     function compareNumber(a, b) {
@@ -43,6 +43,9 @@ export class TodoStore {
         compareFunction = compareText;
         break;
       case "dueDate":
+        compareFunction = compareDates;
+        break;
+      case "createdAt":
         compareFunction = compareDates;
         break;
       case "importance":
