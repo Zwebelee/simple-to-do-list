@@ -77,6 +77,7 @@ export class TodoStore {
   }
 
   // addTodo() {}
+  // incl. createdAt!
 
   // updateTodo(guid) {}
 
@@ -101,20 +102,31 @@ export class TodoStore {
       .then((data) => {
         const sampleTodoData = data["sample-todos"];
         const sampleTodos = sampleTodoData.map(
-          ({ id, title, description, dueDate, importance, finished, guid }) =>
+          ({
+            id,
+            title,
+            description,
+            dueDate,
+            createdAt,
+            updatedAt,
+            importance,
+            finished,
+            guid,
+          }) =>
             new Todo(
               id,
               title,
               description,
+              createdAt,
+              updatedAt,
               dueDate,
               importance,
               finished,
               guid
             )
         );
-        this.todos = sampleTodods;
+        this.todos = sampleTodos;
         localStorage.setItem("simple-todos", JSON.stringify(sampleTodos));
-        this.sort("id");
         this.sort("id", "desc");
       })
       .catch((error) => console.error("Error loading sample todos", error));

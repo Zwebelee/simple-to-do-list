@@ -26,6 +26,8 @@ export default class FormController {
   populateForm() {
     const urlParams = new URLSearchParams(window.location.search);
     const guid = urlParams.get("guid");
+    // TODO: make a "getNode" on todostore -> get them from store, not from localstorage
+    // if guid is wrong -> warning / alert invalid guid
     if (guid) {
       const todos = JSON.parse(localStorage.getItem("simple-todos"));
       const targetTodo = todos.find((todo) => todo.guid === guid);
@@ -69,6 +71,8 @@ export default class FormController {
         id: maxId + 1,
         title: this.titleInput.value,
         importance: this.importanceInput.value,
+        createdAt: Date.now(),
+        updateAt: null,
         dueDate: this.dueDateInput.value,
         finished: this.finishedInput.checked,
         description: this.descriptionInput.value,
