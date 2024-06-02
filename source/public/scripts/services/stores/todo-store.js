@@ -71,15 +71,56 @@ export class TodoStore {
   getTodo(guid) {
     const targetTodo = this.todos.find((todo) => todo.guid === guid);
     if (!targetTodo) {
-      window.alert("Not a valid guid for this todo");
+      throw new Error("Not a valid guid for this todo");
     }
     return targetTodo;
   }
 
-  // addTodo() {}
-  // incl. createdAt!
+  checkGuid(guid) {
+    return this.todos.some((todo) => todo.guid === guid);
+  }
 
-  // updateTodo(guid) {}
+  addTodo(title, description, dueDate, importance, finished, updatedAt=null) {
+
+    const ids = this.todos.map((todo) => todo.id);
+    const maxId = Math.max(...ids);
+
+    const newTodo = {
+      guid: crypto.randomUUID(),
+      id: maxId + 1,
+      createdAt: Date.now(),
+      updateAt: null,
+      title,
+      importance,
+      dueDate,
+      updatedAt,
+      description,
+      finished,
+    };
+    this.todos.push(newTodo);
+    this.visibleItems = this.todos;
+    localStorage.setItem("simple-todos", JSON.stringify(this.todos));
+
+
+  }
+
+  updateTodo(guid, params) {
+    const targetTodo = this.todos.find((todo) => todo.guid === guid);
+    if (targetTodo) {
+      targetTodo.title = params.title;
+      targetTodo.importance = params.importance;
+      targetTodo.dueDate = params.dueDate;
+      targetTodo.finished = params.finished;
+      targetTodo.description = params.description;
+      targetTodo.updatedAt = Date.now();
+
+      localStorage.setItem("simple-todos", JSON.stringify(this.todos));
+    } else {
+      throw new Error(`could not find a todo for this guid: ${guid}.`);
+    }
+
+
+  }
 
   deleteTodo(guid) {
     return new Promise((resolve, reject) => {
@@ -94,7 +135,6 @@ export class TodoStore {
       }
     });
   }
-  // TODO make it private to todostore, only in constructor.
 
   loadSampleTodos() {
     fetch("scripts/services/data/todo-sample-data.json")
@@ -129,7 +169,9 @@ export class TodoStore {
         localStorage.setItem("simple-todos", JSON.stringify(sampleTodos));
         this.sort("id", "desc");
       })
-      .catch((error) => console.error("Error loading sample todos", error));
+      .catch((error) => {
+        throw new Error(`Error loading sample todos: ${error}`)
+      });
   }
 }
 

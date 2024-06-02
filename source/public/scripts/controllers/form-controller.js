@@ -53,38 +53,37 @@ export default class FormController {
   handleSubmit(event) {
     event.preventDefault();
     const urlParams = new URLSearchParams(window.location.search);
-    const guid = urlParams.get("guid");
+    const guid = urlParams.get('guid');
     if (guid) {
-      const targetTodo = todoStore.todos.find((todo) => todo.guid === guid);
-      if (targetTodo) {
-        targetTodo.title = this.titleInput.value;
-        targetTodo.importance = this.importanceInput.value;
-        targetTodo.dueDate = this.dueDateInput.value;
-        targetTodo.finished = this.finishedInput.checked;
-        targetTodo.description = this.descriptionInput.value;
+      if(todoStore.checkGuid(guid)) {
+        console.log('found guid - update')
+        const updateParams = {
+          title: this.titleInput.value,
+          description: this.descriptionInput.value,
+          dueDate: this.dueDateInput.value,
+          importance: this.importanceInput.value,
+          finished: this.finishedInput.checked,
+        }
+
+        todoStore.updateTodo(guid, updateParams);
+      } else {
+        window.alert('No todo found for this guid.')
       }
+
     } else {
-      const ids = todoStore.todos.map((todo) => todo.id);
-      const maxId = Math.max(...ids);
-      const newTodo = {
-        guid: crypto.randomUUID(),
-        id: maxId + 1,
-        title: this.titleInput.value,
-        importance: this.importanceInput.value,
-        createdAt: Date.now(),
-        updateAt: null,
-        dueDate: this.dueDateInput.value,
-        finished: this.finishedInput.checked,
-        description: this.descriptionInput.value,
-      };
-      todoStore.todos.push(newTodo);
+      todoStore.addTodo(
+        this.titleInput.value,
+        this.descriptionInput.value,
+        this.dueDateInput.value,
+        this.importanceInput.value,
+        this.finishedInput.checked,
+      );
+      this.resetForm();
     }
-    localStorage.setItem("simple-todos", JSON.stringify(todoStore.todos));
-    this.titleInput.value = "";
-    this.importanceInput.value = "";
-    this.dueDateInput.value = "";
-    this.finishedInput.checked = false;
-    this.descriptionInput.value = "";
+  }
+
+  resetForm(){
+    this.form.reset();
   }
 }
 
