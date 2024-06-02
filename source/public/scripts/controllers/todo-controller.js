@@ -20,7 +20,6 @@ export default class TodoController {
   initEventHandlers() {
     // TODO -> event handlers einzelne auslagern ?! sonst hier riesen funktion
     this.themeToggle.addEventListener("click", () => {
-      this.toggleTheme();
       if (document.body.classList.contains("dark-theme")) {
         this.themeIcon.src = "assets/dark_mode.svg";
       } else {
