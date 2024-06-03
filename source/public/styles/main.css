@@ -1,10 +1,17 @@
 :root {
     --primary: #9026d7;
     --secondary: #0ff;
+    --suceess: #0f0;
+    --warning: #ffaf02;
+    --danger: #ff5b57;
     --light: #eee;
     --dark: #313154;
-    --danger: #ff5b57;
+    --background: #fff;
+    --foreground: #000;
+    --text: #000;
     --shadow: 0 1px 3px rgb(0 0 0 / 10%);
+    --fullfilled: #da9604;
+    --empty: rgba(99, 97, 97, 0.5);
 }
 
 * {
@@ -12,7 +19,14 @@
 }
 
 body {
-    background: var(--light);
+    box-sizing: content-box;
+    width: 90%;
+    max-width: 90rem;
+    margin: 5rem auto;
+    padding: 0 1rem;
+    border: 0.1rem solid black;
+    border-radius: 0.8rem;
+    background-color: var(--background);
     color: var(--dark);
 }
 
@@ -46,28 +60,37 @@ header {
     align-items: center;
 }
 
-main {
-    border-style: solid;
-    border-color: black;
-}
-
 .header-buttons {
     display: flex;
     gap: 0.5rem;
 }
 
-.controller {
+.controller,
+.controller * {
     display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 1rem;
+}
+
+.controller {
     justify-content: space-between;
     align-items: center;
     width: 100%;
     padding: 1rem;
 }
 
-.sorters {
-    display: flex;
+.controller .subcontrol {
     flex-wrap: wrap;
     gap: 0.5rem;
+}
+
+.sorters {
+    gap: inherit;
+}
+
+.nav-link-button-todo {
+    text-decoration: none;
 }
 
 .sortbutton.active[data-sortorder="asc"]::after {
@@ -78,51 +101,50 @@ main {
     content: "▼";
 }
 
-.todo-grid-status {
-    grid-area: status;
+.todo-list {
+    padding: 1rem;
 }
 
-.todo-grid-duedate {
-    grid-area: duedate;
-}
-
-.todo-grid-title {
-    grid-area: title;
-}
-
-.todo-grid-description {
-    grid-area: description;
-}
-
-.todo-grid-importance {
-    grid-area: importance;
-}
-
-.todo-grid-edit {
-    grid-area: edit;
-}
-
-.todo-grid-delete {
-    grid-area: delete;
+.todo-list-item,
+.todo-list-item * {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .todo-list-item {
-    display: grid;
-    grid-template:
-        "status title importance edit delete"
-        "duedate description description description description"
-        / 8rem 1fr 5rem auto auto;
-    gap: 0.5rem;
-    align-items: center;
-    background-color: #fff;
+    justify-content: space-between;
     padding: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: var(--shadow);
     margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--light);
+    box-shadow: var(--shadow);
 }
 
-.todo-list {
-    padding: 1rem;
+.todo-title {
+    width: 50%;
+}
+
+.todo-duedate {
+    width: 10%;
+    min-width: min-content;
+}
+
+.todo-checkbox {
+    width: auto;
+}
+
+.colored-star {
+    color: var(--fullfilled);
+    font-variation-settings:
+    'FILL' 1;
+}
+
+.empty-star {
+    color: var(--empty);
+    font-variation-settings:
+    'FILL' 1;
 }
 
 button {
@@ -139,6 +161,25 @@ button:hover {
 
 .todo-list-item .button-delete {
     background-color: var(--danger);
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border: 1px solid #000;
+    background-color: #fff;
+    z-index: 1000;
+}
+
+.popup-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    cursor: pointer;
 }
 
 .theme-icon {
