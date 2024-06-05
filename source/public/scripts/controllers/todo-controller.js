@@ -5,22 +5,12 @@ export default class TodoController {
   constructor() {
     this.todoStore = new TodoStore();
     this.themeController = new ThemeController();
-
-    this.themeToggle = document.querySelector(".theme-toggle");
-    this.themeIcon = document.querySelector(".theme-icon");
     this.todoListElement = document.querySelector("#todo-list");
     this.sortersContainer = document.querySelector(".sorters");
   }
 
   initEventHandlers() {
     // TODO -> event handlers einzelne auslagern ?! sonst hier riesen funktion
-    this.themeToggle.addEventListener("click", () => {
-      if (document.body.classList.contains("dark-theme")) {
-        this.themeIcon.src = "assets/dark_mode.svg";
-      } else {
-        this.themeIcon.src = "assets/light_mode.svg";
-      }
-    });
 
     const sorterDiv = document.querySelector(".sorters");
     sorterDiv.addEventListener("click", (event) => {

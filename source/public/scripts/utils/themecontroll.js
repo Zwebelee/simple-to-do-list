@@ -9,10 +9,10 @@ export default class ThemeController {
   toggleTheme() {
     this.body.classList.toggle("dark-theme");
     if (this.body.classList.contains("dark-theme")) {
-      this.themeIcon.src = "assets/dark_mode.svg";
+      this.themeIcon.textContent = "light_mode";
       localStorage.setItem("theme", "dark");
     } else {
-      this.themeIcon.src = "assets/light_mode.svg";
+      this.themeIcon.textContent = "dark_mode";
       localStorage.setItem("theme", "light");
     }
   }
@@ -21,10 +21,10 @@ export default class ThemeController {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
       this.body.classList.add("dark-theme");
-      this.themeIcon.src = "assets/dark_mode.svg";
+      this.themeIcon.textContent = "light_mode";
     } else {
       this.body.classList.remove("dark-theme");
-      this.themeIcon.src = "assets/light_mode.svg";
+      this.themeIcon.textContent = "dark_mode";
     }
   }
 
@@ -36,13 +36,11 @@ export default class ThemeController {
       this.partyTimer = setTimeout(() => {
         this.body.classList.add("party");
       }, 3000);
-    })
+    });
 
     this.themeToggle.addEventListener("mouseout", () => {
       clearTimeout(this.partyTimer);
       this.body.classList.remove("party");
     });
-
-
   }
 }
