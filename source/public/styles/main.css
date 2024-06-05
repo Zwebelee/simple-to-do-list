@@ -55,6 +55,31 @@ body.party {
     100% { background-color: blue; }
 }
 
+#nyan-cat {
+    position: fixed;
+    top: -1rem;
+    width: 8rem;
+    height: 8rem;
+    background-image: url("../assets/partycat.gif");
+    background-size: cover;
+    animation: fly 4s linear infinite;
+    display: none;
+}
+
+body.party #nyan-cat {
+    display: block;
+}
+
+@keyframes fly {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(1000%);
+    }
+}
+
 header {
     display: flex;
     justify-content: space-between;
