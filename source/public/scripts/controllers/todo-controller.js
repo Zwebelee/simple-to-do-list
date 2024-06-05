@@ -49,14 +49,18 @@ export default class TodoController {
       }
       const { todoGuid, action } = targetButton.dataset;
       if (action === "delete") {
-        this.todoStore
-          .deleteTodo(todoGuid)
-          .then(() => {
-            this.renderTodos();
-          })
-          .catch((rejection) => {
-            window.alert(rejection);
-          });
+        const todoItem = targetButton.closest(".todo-list-item");
+        todoItem.classList.add("deleting");
+        setTimeout(() => {
+          this.todoStore
+            .deleteTodo(todoGuid)
+            .then(() => {
+              this.renderTodos();
+            })
+            .catch((rejection) => {
+              window.alert(rejection);
+            });
+        }, 500);
       } else if (action === "edit") {
         window.location.href = `form.html?guid=${todoGuid}`;
       } else if (action === "details") {
@@ -92,6 +96,7 @@ export default class TodoController {
         this.renderTodos();
       }
     });
+
     document.body.addEventListener("click", (event) => {
       const targetButton = event.target.closest(".popup-close");
       if (targetButton) {
@@ -125,25 +130,35 @@ export default class TodoController {
     }
     const now = new Date();
     const targetDate = new Date(dueDate);
-    const diffTime = Math.abs(targetDate - now);
+    const diffTime = targetDate - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+    if (diffDays < 0) {
+      return `${Math.abs(diffDays)} days late`;
+    }
+    if (diffDays === 0) {
+      return "today";
+    }
     if (diffDays === 1) {
       return "tomorrow";
-    } else if (diffDays >= 2 && diffDays <= 6) {
+    }
+    if (diffDays >= 2 && diffDays <= 6) {
       return `${diffDays} days`;
-    } else if (diffDays >= 7 && diffDays <= 13) {
+    }
+    if (diffDays >= 7 && diffDays <= 13) {
       return "1 week";
-    } else if (diffDays >= 14 && diffDays <= 20) {
+    }
+    if (diffDays >= 14 && diffDays <= 20) {
       return "2 weeks";
-    } else if (diffDays >= 21 && diffDays <= 27) {
+    }
+    if (diffDays >= 21 && diffDays <= 27) {
       return "3 weeks";
-    } else if (diffDays >= 28 && diffDays < 180) {
+    }
+    if (diffDays >= 28 && diffDays < 180) {
       const diffMonths = Math.floor(diffDays / 30);
       return `${diffMonths} month${diffMonths > 1 ? "s" : ""}`;
-    } else {
-      return "later";
     }
+    return "later";
   }
 
   createStars(count) {
@@ -162,18 +177,18 @@ export default class TodoController {
 
   createTodos() {
     return this.todoStore.visibleItems
-      .map(
-        (todo) =>
-          `<li class="todo-list-item">
+      .map((todo) => {
+        const isPastDue = todo.dueDate && new Date(todo.dueDate) < new Date();
+        return `<li class="todo-list-item">
               <div class="todo-checkbox">
                 <input data-todo-guid=${todo.guid} type="checkbox" ${
-            todo.finished ? "checked" : ""
-          }/>
+          todo.finished ? "checked" : ""
+        }/>
               </div>
               <div class="todo-title">
                 <h3>${todo.title}</h3>
               </div>
-               <div class="todo-duedate">
+               <div class="todo-duedate ${isPastDue ? "past-due" : ""}">
                 <p>${this.reformatDate(todo.dueDate)}</p>
               </div>
               <div class="todo-importance">
@@ -203,8 +218,8 @@ export default class TodoController {
                 </div>
               </div>
             </div>
-          </li>`
-      )
+          </li>`;
+      })
       .join("");
   }
 

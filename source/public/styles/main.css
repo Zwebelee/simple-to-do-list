@@ -11,7 +11,7 @@
     --text: #000;
     --shadow: 0 1px 3px rgb(0 0 0 / 10%);
     --fullfilled: #da9604;
-    --empty: rgba(99, 97, 97, 0.5);
+    --empty: rgb(99 97 97 / 50%);
 }
 
 * {
@@ -37,6 +37,7 @@ body.dark-theme {
     --dark: #313154;
     --danger: #ffaf02;
     --shadow: 0 1px 3px rgb(0 0 0 / 10%);
+
     background: var(--dark);
     color: var(--primary);
 }
@@ -122,6 +123,22 @@ header {
     box-shadow: var(--shadow);
 }
 
+.todo-list-item.deleting {
+    animation: shrink 0.5s forwards;
+}
+
+@keyframes shrink {
+    0% {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scaleY(0);
+        opacity: 0;
+    }
+}
+
 .todo-title {
     width: 50%;
 }
@@ -131,20 +148,22 @@ header {
     min-width: min-content;
 }
 
+.todo-duedate.past-due {
+    color: var(--danger);
+}
+
 .todo-checkbox {
     width: auto;
 }
 
 .colored-star {
     color: var(--fullfilled);
-    font-variation-settings:
-    'FILL' 1;
+    font-variation-settings: "FILL" 1;
 }
 
 .empty-star {
     color: var(--empty);
-    font-variation-settings:
-    'FILL' 1;
+    font-variation-settings: "FILL" 1;
 }
 
 button {
