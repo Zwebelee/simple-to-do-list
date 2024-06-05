@@ -12,10 +12,6 @@ export default class TodoController {
     this.sortersContainer = document.querySelector(".sorters");
   }
 
-  /** toggleTheme() {
-    this.body.classList.toggle("dark-theme");
-  } */
-
   initEventHandlers() {
     // TODO -> event handlers einzelne auslagern ?! sonst hier riesen funktion
     this.themeToggle.addEventListener("click", () => {
@@ -29,11 +25,13 @@ export default class TodoController {
     const sorterDiv = document.querySelector(".sorters");
     sorterDiv.addEventListener("click", (event) => {
       if (event.target.tagName === "BUTTON") {
-        const { field, sortorder} = event.target.dataset;
+        const { field, sortorder } = event.target.dataset;
         const order = event.target.dataset.sortorder;
 
         const sortButtons = document.querySelectorAll(".sortbutton");
-        sortButtons.forEach((button) => {button. classList.remove("active")});
+        sortButtons.forEach((button) => {
+          button.classList.remove("active");
+        });
 
         event.target.classList.add("active");
         this.todoStore.sort(field, order);
@@ -48,6 +46,8 @@ export default class TodoController {
       const newState = state === "off" ? "on" : "off";
       this.todoStore.filter(newState);
       this.renderTodos();
+
+      event.target.textContent = newState === "on" ? "All" : "Filter";
 
       event.target.dataset.state = newState;
     });
@@ -73,20 +73,40 @@ export default class TodoController {
         event.preventDefault();
 
         // Close any existing popups
-        const existingPopups = document.querySelectorAll('.popup');
-        existingPopups.forEach(popup => popup.remove());
+        const existingPopups = document.querySelectorAll(".popup");
+        existingPopups.forEach((popup) => popup.remove());
 
         // Open new popup
-        const popupHtml = this.createTodoPopUp(this.todoStore.getTodo(todoGuid));
-        document.body.insertAdjacentHTML('beforeend', popupHtml);
+        const popupHtml = this.createTodoPopUp(
+          this.todoStore.getTodo(todoGuid)
+        );
+        document.body.insertAdjacentHTML("beforeend", popupHtml);
       }
     });
 
-    document.body.addEventListener('click', (event) => {
-      const targetButton = event.target.closest('.popup-close');
+    this.todoListElement.addEventListener("change", (event) => {
+      if (event.target.type === "checkbox") {
+        const guid = event.target.dataset.todoGuid;
+        const todo = this.todoStore.getTodo(guid);
+        if (todo) {
+          // TODO: duplicate.. update better?!?
+          const updateParams = {
+            title: todo.title,
+            description: todo.description,
+            dueDate: todo.dueDate,
+            importance: todo.importance,
+            finished: event.target.checked,
+          };
+          this.todoStore.updateTodo(guid, updateParams);
+        }
+        this.renderTodos();
+      }
+    });
+    document.body.addEventListener("click", (event) => {
+      const targetButton = event.target.closest(".popup-close");
       if (targetButton) {
         event.preventDefault();
-        const popup = targetButton.closest('.popup');
+        const popup = targetButton.closest(".popup");
         popup.remove();
       }
     });
@@ -97,20 +117,21 @@ export default class TodoController {
       { field: "title", alias: "Title", sortorder: "desc" },
       { field: "dueDate", alias: "Date", sortorder: "desc" },
       { field: "createdAt", alias: "Created", sortorder: "desc" },
-      { field: "importance", alias: "Importance", sortorder: "desc" }
+      { field: "importance", alias: "Importance", sortorder: "desc" },
     ];
 
-    const buttonsHtml = sortButtons.map(
-      (props) =>
-        `<button class="sortbutton" type="button" id="${props.field}-button" data-field="${props.field}" data-sortorder="${props.sortorder}">${props.alias}</button>`
-    )
+    const buttonsHtml = sortButtons
+      .map(
+        (props) =>
+          `<button class="sortbutton" type="button" id="${props.field}-button" data-field="${props.field}" data-sortorder="${props.sortorder}">${props.alias}</button>`
+      )
       .join("");
     return buttonsHtml;
   }
 
-  reformatDate(dueDate){
-    if (!dueDate){
-      return 'some day';
+  reformatDate(dueDate) {
+    if (!dueDate) {
+      return "some day";
     }
     const now = new Date();
     const targetDate = new Date(dueDate);
@@ -118,30 +139,32 @@ export default class TodoController {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 1) {
-      return 'tomorrow';
+      return "tomorrow";
     } else if (diffDays >= 2 && diffDays <= 6) {
       return `${diffDays} days`;
     } else if (diffDays >= 7 && diffDays <= 13) {
-      return '1 week';
+      return "1 week";
     } else if (diffDays >= 14 && diffDays <= 20) {
-      return '2 weeks';
+      return "2 weeks";
     } else if (diffDays >= 21 && diffDays <= 27) {
-      return '3 weeks';
+      return "3 weeks";
     } else if (diffDays >= 28 && diffDays < 180) {
       const diffMonths = Math.floor(diffDays / 30);
-      return `${diffMonths} month${diffMonths > 1 ? 's' : ''}`;
+      return `${diffMonths} month${diffMonths > 1 ? "s" : ""}`;
     } else {
-      return 'later';
+      return "later";
     }
   }
 
-  createStars(count){
-    let starsHtml = '';
-    for (let i = 1; i <= 5; i++){
-      if(i<=count) {
-        starsHtml += '<span class="material-symbols-outlined star-icon colored-star">kid_star</span>';
+  createStars(count) {
+    let starsHtml = "";
+    for (let i = 1; i <= 5; i++) {
+      if (i <= count) {
+        starsHtml +=
+          '<span class="material-symbols-outlined star-icon colored-star">kid_star</span>';
       } else {
-        starsHtml += '<span class="material-symbols-outlined star-icon empty-star">kid_star</span>';
+        starsHtml +=
+          '<span class="material-symbols-outlined star-icon empty-star">kid_star</span>';
       }
     }
     return starsHtml;
@@ -153,7 +176,9 @@ export default class TodoController {
         (todo) =>
           `<li class="todo-list-item">
               <div class="todo-checkbox">
-                <input type="checkbox" ${todo.finished ? "checked" : ""}/>
+                <input data-todo-guid=${todo.guid} type="checkbox" ${
+            todo.finished ? "checked" : ""
+          }/>
               </div>
               <div class="todo-title">
                 <h3>${todo.title}</h3>
@@ -166,17 +191,23 @@ export default class TodoController {
               </div>
               <div class="todo-button-group">
                 <div class="todo-details">
-                  <button type="button" class="button-details" data-action="details" data-todo-guid=${todo.guid}>
+                  <button type="button" class="button-details" data-action="details" data-todo-guid=${
+                    todo.guid
+                  }>
                     <span class="material-symbols-outlined">more_horiz</span>
                   </button>
                 </div>
                 <div class="todo-edit">
-                  <button type="button" class="button-edit" data-action="edit" data-todo-guid=${todo.guid}>
+                  <button type="button" class="button-edit" data-action="edit" data-todo-guid=${
+                    todo.guid
+                  }>
                     <span class="material-symbols-outlined">edit</span>
                   </button>
                 </div>
                 <div class="todo-delete">
-                  <button type="button" class="button-delete" data-action="delete" data-todo-guid=${todo.guid}>
+                  <button type="button" class="button-delete" data-action="delete" data-todo-guid=${
+                    todo.guid
+                  }>
                     <span class="material-symbols-outlined">delete</span>
                   </button>
                 </div>
@@ -187,7 +218,7 @@ export default class TodoController {
       .join("");
   }
 
-  createTodoPopUp(todo){
+  createTodoPopUp(todo) {
     return `
         <div class="popup">
             <button class="popup-close"><span class="material-symbols-outlined">close</span></button>
@@ -195,11 +226,13 @@ export default class TodoController {
             <p>Description: ${todo.description ? todo.description : "-"}</p>
             <p>Due date: ${todo.dueDate ? todo.dueDate : "-"}</p>
             <p>Importance: ${todo.importance}</p>
-            <p>Finished: ${todo.finished ? 'Yes' : 'No'}</p>
+            <p>Finished: ${todo.finished ? "Yes" : "No"}</p>
             <p>ID: ${todo.id}</p>
             <p>GUID: ${todo.guid}</p>
-            <p>Created at: ${(new Date(todo.createdAt)).toLocaleString()}</p>
-            <p>Updated at: ${todo.updatedAt ? (new Date(todo.updatedAt)).toLocaleString() : "-"}</p>
+            <p>Created at: ${new Date(todo.createdAt).toLocaleString()}</p>
+            <p>Updated at: ${
+              todo.updatedAt ? new Date(todo.updatedAt).toLocaleString() : "-"
+            }</p>
             
         </div>
     `;
