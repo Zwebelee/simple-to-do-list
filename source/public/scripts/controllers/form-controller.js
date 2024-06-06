@@ -1,3 +1,5 @@
+/* global Handlebars */
+
 import todoStore from "../services/stores/todo-store.js";
 import ThemeController from "../utils/themecontroll.js";
 
@@ -17,26 +19,27 @@ export default class FormController {
   initialize() {
     window.onload = this.populateForm.bind(this);
     this.themeController.initialize();
-    this.formCancel();
     if (this.form) {
       this.form.addEventListener("submit", this.handleSubmit.bind(this));
     }
   }
 
   populateForm() {
-    debugger;
     const urlParams = new URLSearchParams(window.location.search);
     const guid = urlParams.get("guid");
 
     const templateSource = document.getElementById("button-template").innerHTML;
     const template = Handlebars.compile(templateSource);
 
+    let isUpdate = false;
+
     // TODO: make a "getNode" on todostore -> get them from store, not from localstorage
     // if guid is wrong -> warning / alert invalid guid
     if (guid) {
       const todos = JSON.parse(localStorage.getItem("simple-todos"));
       const targetTodo = todos.find((todo) => todo.guid === guid);
-      const data = { isUpdate: !targetTodo };
+      isUpdate = !!targetTodo;
+      const data = { isUpdate };
       const buttonsHtml = template(data);
       document.querySelector(".form-row-submitting").innerHTML = buttonsHtml;
 
@@ -47,38 +50,18 @@ export default class FormController {
         this.finishedInput.checked = targetTodo.finished;
         this.descriptionInput.value = targetTodo.description;
       }
+    } else {
+      const data = { isUpdate };
+      const buttonsHtml = template(data);
+      document.querySelector(".form-row-submitting").innerHTML = buttonsHtml;
     }
-  }
-
-  formCancel() {
-    const cancelButtons = document.querySelector(".addAndCancel");
-    cancelButtons.addEventListener("click", (event) => {
-      event.preventDefault();
-      this.handleSubmit(event);
-      window.location.href = "index.html";
-    });
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    const urlParams = new URLSearchParams(window.location.search);
-    const guid = urlParams.get("guid");
-    if (guid) {
-      if (todoStore.checkGuid(guid)) {
-        console.log("found guid - update");
-        const updateParams = {
-          title: this.titleInput.value,
-          description: this.descriptionInput.value,
-          dueDate: this.dueDateInput.value,
-          importance: this.importanceInput.value,
-          finished: this.finishedInput.checked,
-        };
+    const { action } = document.activeElement.dataset;
 
-        todoStore.updateTodo(guid, updateParams);
-      } else {
-        window.alert("No todo found for this guid.");
-      }
-    } else {
+    if (action === "add" || action === "addAndReturn") {
       todoStore.addTodo(
         this.titleInput.value,
         this.descriptionInput.value,
@@ -86,13 +69,41 @@ export default class FormController {
         this.importanceInput.value,
         this.finishedInput.checked
       );
-      this.resetForm();
+      if (action === "add") {
+        this.resetForm();
+      } else {
+        window.location.href = "index.html";
+      }
+    } else if (action === "update" || action === "updateAndReturn") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const guid = urlParams.get("guid");
+      if (guid) {
+        if (todoStore.checkGuid(guid)) {
+          const updateParams = {
+            title: this.titleInput.value,
+            description: this.descriptionInput.value,
+            dueDate: this.dueDateInput.value,
+            importance: this.importanceInput.value,
+            finished: this.finishedInput.checked
+          };
+          todoStore.updateTodo(guid, updateParams);
+          if (action === "update") {
+            // visible update, maybe animation of green checkmark
+          } else {
+            window.location.href = "index.html";
+          }
+        } else {
+          window.alert("No todo found for this guid.");
+        }
+      }
+
     }
   }
 
-  resetForm() {
+  resetForm(){
     this.form.reset();
   }
+
 }
 
 new FormController().initialize();
