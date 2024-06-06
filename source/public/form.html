@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Note App</title>
   <script src="scripts/controllers/form-controller.js" type="module"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.min.js"
+          integrity="sha256-/PJBs6QWvXijOFIX04kZpLb6ZtSQckdOIavLWKKOgXU=" crossorigin="anonymous" defer></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <link rel="stylesheet" href="styles/main.css">
 </head>
@@ -23,8 +25,7 @@
     <nav><a href="index.html"><button class="cancel" type="button">cancel</button></a></nav>
     </div>
     <div class="form-container">
-
-      <form id="form" action="./index.html" action="POST">
+      <form id="form" action="./index.html">
         <div class="form-row">
         <label for="title">Title</label>
         <input id="title" type="text" name="title" required/>
@@ -56,6 +57,16 @@
         <div class="form-row-submitting">
           <button id= "form-submit" type="submit">add</button>
           <button class="addAndCancel">add and return</button>
+          <script id="button-template" type="text/x-handlebars-template">
+            {{#if isUpdate}}
+              <button id="form-submit" type="submit">update</button>
+              <button class="addAndCancel">update and return</button>
+            {{else}}
+              <button id="form-submit" type="submit">add</button>
+              <button class="addAndCancel">add and return</button>
+              {{/if}}
+
+          </script>
         </div>
       </form>
     </div>
