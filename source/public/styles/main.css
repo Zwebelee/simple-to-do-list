@@ -90,14 +90,12 @@ header {
 
 .about-body {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     width: 30%;
     min-width: 25rem;
     max-width: 70rem;
-    flex-direction: column;
     align-items: flex-end;
     padding: 0.5rem;
-
 }
 
 .form-body {
@@ -304,7 +302,6 @@ button:hover {
     }
 }
 
-#form-submit[data-action="update"].clicked,
-#form-submit[data-action="add"].clicked {
+#form-submit[data-action="update"].clicked {
     animation: button-animation 1s;
 }
