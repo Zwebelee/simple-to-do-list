@@ -1,4 +1,4 @@
-import { Todo } from "../models/todo.js";
+import Todo from "../models/todo.js";
 
 export class TodoStore {
   constructor() {
@@ -86,8 +86,7 @@ export class TodoStore {
     return this.todos.some((todo) => todo.guid === guid);
   }
 
-  addTodo(title, description, dueDate, importance, finished, updatedAt=null) {
-
+  addTodo(title, description, dueDate, importance, finished, updatedAt = null) {
     const ids = this.todos.map((todo) => todo.id);
     const maxId = Math.max(...ids);
 
@@ -106,8 +105,6 @@ export class TodoStore {
     this.todos.push(newTodo);
     this.visibleItems = this.todos;
     localStorage.setItem("simple-todos", JSON.stringify(this.todos));
-
-
   }
 
   updateTodo(guid, params) {
@@ -124,8 +121,6 @@ export class TodoStore {
     } else {
       throw new Error(`could not find a todo for this guid: ${guid}.`);
     }
-
-
   }
 
   deleteTodo(guid) {
@@ -176,7 +171,7 @@ export class TodoStore {
         this.sort("id", "desc");
       })
       .catch((error) => {
-        throw new Error(`Error loading sample todos: ${error}`)
+        throw new Error(`Error loading sample todos: ${error}`);
       });
   }
 }

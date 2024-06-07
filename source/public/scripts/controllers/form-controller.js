@@ -13,7 +13,6 @@ export default class FormController {
     this.dueDateInput = document.querySelector("#dueDate");
     this.finishedInput = document.querySelector("#finished");
     this.descriptionInput = document.querySelector("#description");
-    this.todoListElement = document.querySelector("#todo-list");
   }
 
   initialize() {
@@ -40,8 +39,7 @@ export default class FormController {
       const targetTodo = todos.find((todo) => todo.guid === guid);
       isUpdate = !!targetTodo;
       const data = { isUpdate };
-      const buttonsHtml = template(data);
-      document.querySelector(".form-row-submitting").innerHTML = buttonsHtml;
+      document.querySelector(".form-row-submitting").innerHTML = template(data);
 
       const buttons = document.querySelectorAll(
         '#form-submit[data-action="update"], #form-submit[data-action="add"]'
@@ -66,8 +64,7 @@ export default class FormController {
       }
     } else {
       const data = { isUpdate };
-      const buttonsHtml = template(data);
-      document.querySelector(".form-row-submitting").innerHTML = buttonsHtml;
+      document.querySelector(".form-row-submitting").innerHTML = template(data);
     }
   }
 
@@ -101,13 +98,9 @@ export default class FormController {
             finished: this.finishedInput.checked,
           };
           todoStore.updateTodo(guid, updateParams);
-          if (action === "update") {
-            // visible update, maybe animation of green checkmark
-          } else {
+          if (action !== "update") {
             window.location.href = "index.html";
           }
-        } else {
-          window.alert("No todo found for this guid.");
         }
       }
     }

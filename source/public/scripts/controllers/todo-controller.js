@@ -23,9 +23,12 @@ export default class TodoController {
           button.classList.remove("active");
         });
 
-        event.target.classList.add("active");
+        const activeButton = event.target;
+        const newSortOrder = sortorder === "asc" ? "desc" : "asc";
+        activeButton.classList.add("active");
+        activeButton.dataset.sortorder = newSortOrder;
+
         this.todoStore.sort(field, order);
-        event.target.dataset.sortorder = sortorder === "asc" ? "desc" : "asc"; // TODO how to fix ES LINT ?
         this.renderTodos();
       }
     });
@@ -37,9 +40,8 @@ export default class TodoController {
       this.todoStore.filter(newState);
       this.renderTodos();
 
-      event.target.textContent = newState === "on" ? "All" : "Filter";
-
-      event.target.dataset.state = newState;
+      const targetFilter = event.target;
+      targetFilter.dataset.state = newState === "on" ? "All" : "Filter";
     });
 
     this.todoListElement.addEventListener("click", (event) => {
@@ -51,6 +53,7 @@ export default class TodoController {
       if (action === "delete") {
         const todoItem = targetButton.closest(".todo-list-item");
         todoItem.classList.add("deleting");
+        // timeout for the delete animation
         setTimeout(() => {
           this.todoStore
             .deleteTodo(todoGuid)
@@ -71,7 +74,7 @@ export default class TodoController {
         existingPopups.forEach((popup) => popup.remove());
 
         // Open new popup
-        const popupHtml = this.createTodoPopUp(
+        const popupHtml = TodoController.createTodoPopUp(
           this.todoStore.getTodo(todoGuid)
         );
         document.body.insertAdjacentHTML("beforeend", popupHtml);
@@ -107,7 +110,7 @@ export default class TodoController {
     });
   }
 
-  createSortButtons() {
+  static createSortButtons() {
     const sortButtons = [
       { field: "title", alias: "Title", sortorder: "desc" },
       { field: "dueDate", alias: "Date", sortorder: "desc" },
@@ -115,16 +118,15 @@ export default class TodoController {
       { field: "importance", alias: "Importance", sortorder: "desc" },
     ];
 
-    const buttonsHtml = sortButtons
+    return sortButtons
       .map(
         (props) =>
           `<button class="sortbutton" type="button" id="${props.field}-button" data-field="${props.field}" data-sortorder="${props.sortorder}">${props.alias}</button>`
       )
       .join("");
-    return buttonsHtml;
   }
 
-  reformatDate(dueDate) {
+  static reformatDate(dueDate) {
     if (!dueDate) {
       return "some day";
     }
@@ -161,7 +163,7 @@ export default class TodoController {
     return "later";
   }
 
-  createStars(count) {
+  static createStars(count) {
     let starsHtml = "";
     for (let i = 1; i <= 5; i++) {
       if (i <= count) {
@@ -189,10 +191,10 @@ export default class TodoController {
                 <h3>${todo.title}</h3>
               </div>
                <div class="todo-duedate ${isPastDue ? "past-due" : ""}">
-                <p>${this.reformatDate(todo.dueDate)}</p>
+                <p>${TodoController.reformatDate(todo.dueDate)}</p>
               </div>
               <div class="todo-importance">
-                ${this.createStars(todo.importance)}
+                ${TodoController.createStars(todo.importance)}
               </div>
               <div class="todo-button-group">
                 <div class="todo-details">
@@ -223,7 +225,7 @@ export default class TodoController {
       .join("");
   }
 
-  createTodoPopUp(todo) {
+  static createTodoPopUp(todo) {
     return `
         <div class="popup">
             <button class="popup-close"><span class="material-symbols-outlined">close</span></button>
@@ -248,7 +250,7 @@ export default class TodoController {
   }
 
   renderSortButtons() {
-    this.sortersContainer.innerHTML = this.createSortButtons();
+    this.sortersContainer.innerHTML = TodoController.createSortButtons();
   }
 
   async initialize() {
