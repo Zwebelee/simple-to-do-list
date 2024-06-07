@@ -43,6 +43,20 @@ export default class FormController {
       const buttonsHtml = template(data);
       document.querySelector(".form-row-submitting").innerHTML = buttonsHtml;
 
+      const buttons = document.querySelectorAll(
+        '#form-submit[data-action="update"], #form-submit[data-action="add"]'
+      );
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          button.classList.add("clicked");
+        });
+
+        button.addEventListener("animationend", () => {
+          button.classList.remove("clicked");
+        });
+      });
+
       if (targetTodo) {
         this.titleInput.value = targetTodo.title;
         this.importanceInput.value = targetTodo.importance;
@@ -84,7 +98,7 @@ export default class FormController {
             description: this.descriptionInput.value,
             dueDate: this.dueDateInput.value,
             importance: this.importanceInput.value,
-            finished: this.finishedInput.checked
+            finished: this.finishedInput.checked,
           };
           todoStore.updateTodo(guid, updateParams);
           if (action === "update") {
@@ -96,14 +110,12 @@ export default class FormController {
           window.alert("No todo found for this guid.");
         }
       }
-
     }
   }
 
-  resetForm(){
+  resetForm() {
     this.form.reset();
   }
-
 }
 
 new FormController().initialize();

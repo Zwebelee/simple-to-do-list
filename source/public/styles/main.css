@@ -49,10 +49,12 @@ body.party {
 
 @keyframes party {
     0% { background-color: red; }
-    25% { background-color: orange; }
-    50% { background-color: yellow; }
-    75% { background-color: green; }
-    100% { background-color: blue; }
+    14% { background-color: orange; }
+    28% { background-color: yellow; }
+    42% { background-color: green; }
+    57% { background-color: blue; }
+    71% { background-color: indigo; }
+    100% { background-color: violet; }
 }
 
 #nyan-cat {
@@ -84,6 +86,12 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.form-body {
+    width: 30%;
+    min-width: 25rem;
+    max-width: 70rem;
 }
 
 .header-buttons {
@@ -193,10 +201,15 @@ header {
 
 button {
     padding: 0.5rem;
+    border: 0.1rem solid black;
     border-radius: 0.25rem;
     color: var(--primary);
     cursor: pointer;
     transition: 0.2s ease-in-out;
+}
+
+textarea {
+    resize: vertical;
 }
 
 button:hover {
@@ -238,43 +251,48 @@ button:hover {
     filter: invert(1);
 }
 
-.form-controller {
-    display: flex;
-    flex-flow: column;
-    flex-wrap: wrap;
-    padding: 1rem;
-}
-
-.form-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-form {
-    display: flex;
-    flex-flow: column;
-    flex-wrap: wrap;
-}
-
-.flex-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
 .form-head {
+    display: flex;
     justify-content: space-between;
-    align-items: center;
+    gap: 0.5rem;
 }
 
-.form-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.form-controller .form-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    padding: 0.25rem;
+    gap: 1rem;
+}
+
+.form-row label {
+    font-weight: bold;
 }
 
 .form-row-submitting {
     display: flex;
     justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+@keyframes button-animation {
+    0% {
+        transform: scale(1);
+        background-color: initial;
+    }
+
+    50% {
+        transform: scale(0.5);
+        background-color: green;
+    }
+
+    100% {
+        transform: scale(1);
+        background-color: initial;
+    }
+}
+
+#form-submit[data-action="update"].clicked,
+#form-submit[data-action="add"].clicked {
+    animation: button-animation 1s;
 }
