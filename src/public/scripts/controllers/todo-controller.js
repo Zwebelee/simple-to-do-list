@@ -1,5 +1,6 @@
 import { TodoStore } from "../services/stores/todo-store.js";
 import ThemeController from "../utils/themecontroll.js";
+import { todoService } from "../services/todo-service.js";
 
 export default class TodoController {
   constructor() {
@@ -10,6 +11,14 @@ export default class TodoController {
   }
 
   initEventHandlers() {
+
+    const testbutton = document.querySelector("#testbutton");
+    testbutton.addEventListener("click", async () => {
+      const todos = await todoService.createTodo({"title":"teest"});
+      console.log(todos);
+    })
+
+
     // TODO -> event handlers einzelne auslagern ?! sonst hier riesen funktion
 
     const sorterDiv = document.querySelector(".sorters");

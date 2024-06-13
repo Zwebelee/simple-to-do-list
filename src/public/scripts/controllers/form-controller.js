@@ -2,6 +2,7 @@
 
 import todoStore from "../services/stores/todo-store.js";
 import ThemeController from "../utils/themecontroll.js";
+import { todoService } from "../services/todo-service.js";
 
 export default class FormController {
   constructor() {
@@ -73,6 +74,7 @@ export default class FormController {
     const { action } = document.activeElement.dataset;
 
     if (action === "add" || action === "addAndReturn") {
+      await todoService.createTodo({"title":'123'});
       todoStore.addTodo(
         this.titleInput.value,
         this.descriptionInput.value,

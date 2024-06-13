@@ -1,13 +1,13 @@
 import express from 'express';
-import todoRoutes from './source/routes/todo-routes.js';
+import { todoRoutes } from './src/routes/todo-routes.js';
 
 
 
 const app = express();
 
 // middlewares
-app.use(express.static('source/public'));
-app.use("/", todoRoutes);
+app.use(express.static('src/public'));
+app.use("/todos", todoRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
