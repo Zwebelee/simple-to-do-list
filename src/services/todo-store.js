@@ -15,7 +15,9 @@ export class TodoStore {
   }
 
   async add(todo) {
-    const newTodo = new Todo(...todo);
+    const {title, description, dueDate, importance, finished} = todo;
+    const id = null
+    const newTodo = new Todo(id, title, description, dueDate, importance, finished); // TODO: should insert next max index id
     return this.db.insert(newTodo);
   }
 

@@ -2,8 +2,9 @@ import { httpService } from "./http-service.js";
 
 class TodoService {
 
-  static async createTodo(todo) {
-    return httpService.ajax("POST", "/todos/", todo);
+  async createTodo(todo) {
+
+    return httpService.fetch("POST", "/todos/", todo);
   }
 }
 

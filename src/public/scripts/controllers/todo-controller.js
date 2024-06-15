@@ -12,12 +12,20 @@ export default class TodoController {
 
   initEventHandlers() {
 
-    const testbutton = document.querySelector("#testbutton");
-    testbutton.addEventListener("click", async () => {
-      const todos = await todoService.createTodo({"title":"teest"});
-      console.log(todos);
+    const testbtn = document.querySelector(".testbutton")
+    console.log(testbtn)
+    testbtn.addEventListener("click", ()=>{
+      console.log("test")
+      todoService.createTodo({"title": "test", "description": "test", "dueDate": "2021-06-01", "importance": 3, "finished": false});
     })
 
+    /** testbtn.addEventListener("click", async()=>{
+      // TODO: send todo-object oder nur die props dafür ? wo soll das erstellt werden
+      const randTodo = new Todo(
+        5, "test", "desctest", Date.now(), null, null, 3, false,"123-321"
+      )
+      await todoService.createTodo(randTodo)
+    })*/
 
     // TODO -> event handlers einzelne auslagern ?! sonst hier riesen funktion
 
