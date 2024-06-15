@@ -69,12 +69,20 @@ export default class FormController {
     }
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
     const { action } = document.activeElement.dataset;
 
     if (action === "add" || action === "addAndReturn") {
-      await todoService.createTodo({"title":'123'});
+      await todoService.createTodo(
+        {
+          "title":this.titleInput.value,
+          "description":this.descriptionInput.value,
+          "dueDate":this.dueDateInput.value,
+          "importance":this.importanceInput.value,
+          "finished":this.finishedInput.checked
+        }
+      );
       todoStore.addTodo(
         this.titleInput.value,
         this.descriptionInput.value,

@@ -16,13 +16,15 @@ export class TodoStore {
 
   async add(todo) {
     const {title, description, dueDate, importance, finished} = todo;
-    const id = null
-    const newTodo = new Todo(id, title, description, dueDate, importance, finished); // TODO: should insert next max index id
+    const id = await this.highestId() + 1;
+    const newTodo = new Todo(id, title, description, dueDate, importance, finished);
     return this.db.insert(newTodo);
   }
 
   async delete(guid) {
-    await this.db.remove({ _id: guid }, {});
+    const todo = await this.db.findOne({ guid });
+    // eslint-disable-next-line no-underscore-dangle
+    await this.db.remove({ _id: todo._id }, {});
   }
 
   async update() {
@@ -34,6 +36,11 @@ export class TodoStore {
     const todo = await this.db.findOne({ _id: guid });
     return todo !== null;
 
+  }
+
+  async highestId() {
+    const todos = await this.getAll();
+    return todos.reduce((max, todo) => Math.max(max, todo.id), 0);
   }
 }
 

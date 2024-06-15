@@ -15,7 +15,7 @@ export class TodosController {
   }
 
   deleteTodo = async (req, res) => {
-    res.json(await todoStore.delete(req.params.id));
+    res.json(await todoStore.delete(req.params.id)); //TODO guid or ID ?
   }
 }
 

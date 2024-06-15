@@ -80,6 +80,9 @@ export default class TodoController {
             .catch((rejection) => {
               window.alert(rejection);
             });
+        todoService.deleteTodo(todoGuid)
+
+
         }, 500);
       } else if (action === "edit") {
         window.location.href = `form.html?guid=${todoGuid}`;
@@ -180,6 +183,9 @@ export default class TodoController {
     return "later";
   }
 
+
+
+
   static createStars(count) {
     let starsHtml = "";
     for (let i = 1; i <= 5; i++) {
@@ -262,8 +268,9 @@ export default class TodoController {
     `;
   }
 
-  renderTodos() {
-    this.todoListElement.innerHTML = this.createTodos();
+  async renderTodos() {
+    // this.todoListElement.innerHTML = this.createTodos();
+    this.todoListElement.innerHTML = await TodoController.testcreateTodos();
   }
 
   renderSortButtons() {
@@ -276,6 +283,57 @@ export default class TodoController {
     await this.todoStore.ready;
     this.renderTodos();
     this.renderSortButtons();
+  }
+
+  static async testcreateTodos(){
+    const todos = await todoService.getTodos();
+    console.log(todos)
+
+    return todos
+      .map((todo) => {
+        const isPastDue = todo.dueDate && new Date(todo.dueDate) < new Date();
+        return `<li class="todo-list-item">
+              <div class="todo-checkbox">
+                <input data-todo-guid=${todo.guid} type="checkbox" ${
+          todo.finished ? "checked" : ""
+        }/>
+              </div>
+              <div class="todo-title">
+                <h3>${todo.title}</h3>
+              </div>
+               <div class="todo-duedate ${isPastDue ? "past-due" : ""}">
+                <p>${TodoController.reformatDate(todo.dueDate)}</p>
+              </div>
+              <div class="todo-importance">
+                ${TodoController.createStars(todo.importance)}
+              </div>
+              <div class="todo-button-group">
+                <div class="todo-details">
+                  <button type="button" class="button-details" data-action="details" data-todo-guid=${
+          todo.guid
+        }>
+                    <span class="material-symbols-outlined">more_horiz</span>
+                  </button>
+                </div>
+                <div class="todo-edit">
+                  <button type="button" class="button-edit" data-action="edit" data-todo-guid=${
+          todo.guid
+        }>
+                    <span class="material-symbols-outlined">edit</span>
+                  </button>
+                </div>
+                <div class="todo-delete">
+                  <button type="button" class="button-delete" data-action="delete" data-todo-guid=${
+          todo.guid
+        }>
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </li>`;
+      })
+      .join("");
   }
 }
 
