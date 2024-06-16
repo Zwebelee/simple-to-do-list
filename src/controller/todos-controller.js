@@ -11,11 +11,11 @@ export class TodosController {
   }
 
   getTodo = async (req, res) => {
-    res.json(await todoStore.get(req.params.id));
+    res.json(await todoStore.get(req.params.guid));
   }
 
   deleteTodo = async (req, res) => {
-    res.json(await todoStore.delete(req.params.id)); //TODO guid or ID ?
+    res.json(await todoStore.delete(req.params.guid)); //TODO guid or ID ?
   }
 
   updateTodo = async (req,res) => {

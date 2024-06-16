@@ -14,7 +14,8 @@ export class TodoStore {
   }
 
   async get(guid) {
-    return this.db.findOne({ _id: guid });
+    const { _id } = await this.db.findOne({ guid });
+    return this.db.findOne({_id });
   }
 
   async getAll() {
@@ -29,14 +30,19 @@ export class TodoStore {
   }
 
   async delete(guid) {
-    const todo = await this.db.findOne({ guid });
-    // eslint-disable-next-line no-underscore-dangle
-    await this.db.remove({ _id: todo._id }, {});
+    const { _id } = await this.db.findOne({ guid });
+    await this.db.remove({ _id }, {});
   }
 
-  async update() {
-    console.log('implement update', this.db);
-
+  async update(todo) {
+    const { _id } = await this.get(todo.guid)
+    const updateData = {...todo}
+    updateData.updatedAt = Date.now();
+    await this.db.updateOne(
+      {_id},
+      {$set: updateData},
+      {returnUpdatedDocs: true}
+    );
   }
 
   async validate(guid) {
@@ -58,15 +64,12 @@ export class TodoStore {
         todo.description,
         todo.dueDate,
         todo.importance,
-        todo.finished
+        todo.finished,
+        todo.createdAt,
+        todo.updatedAt,
+        todo.guid
       );
-
-      sampleTodo.createAt = todo.createdAt;
-      sampleTodo.updatedAt = todo.updatedAt;
-      sampleTodo.guid = todo.guid;
-
       this.add(sampleTodo).then();
-
     });
   }
 }

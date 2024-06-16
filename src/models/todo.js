@@ -5,16 +5,19 @@ export class Todo {
     description,
     dueDate,
     importance,
-    finished
+    finished,
+    createdAt = Date.now(),
+    updatedAt = null,
+    guid = crypto.randomUUID()
   ) {
     this.id = id;
     this.title = title;
     this.description = description;
-    this.createdAt = Date.now();
-    this.updatedAt = null;
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
     this.dueDate = dueDate;
     this.importance = importance;
     this.finished = finished;
-    this.guid = crypto.randomUUID();
+    this.guid = guid
   }
 }
