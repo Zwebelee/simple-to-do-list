@@ -6,8 +6,9 @@ class TodoService {
     return httpService.fetch("POST", "/todos/", todo);
   }
 
-  async updateTodo (todo) {
-    return httpService.fetch("PUT", `/todos/${todo.guid}`, todo); // TODO check
+  async updateTodo (guid, todo) {
+    console.log('todo-service -> put request')
+    return httpService.fetch("PUT", `/todos/${guid}`, todo); // TODO check
   }
 
   async deleteTodo(guid) {

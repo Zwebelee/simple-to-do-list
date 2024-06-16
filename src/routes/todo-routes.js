@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.get("/", todosController.getTodos);
 router.post("/", todosController.createTodo);
-router.get("/:id/", todosController.getTodo);
-router.delete("/:id/", todosController.deleteTodo);
+router.get("/:guid/", todosController.getTodo);
+router.put("/:guid/", todosController.updateTodo);
+router.delete("/:guid/", todosController.deleteTodo);
 
 export const todoRoutes = router;

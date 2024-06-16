@@ -124,12 +124,13 @@ export default class TodoViewController {
 
   async renderTodos(field = "id", order = "asc") {
     await this.loadTodos();
-    await this.sortTodos(field, order)
     if (this.filterState){
       this.filterTodos("on")
     }
+    await this.sortTodos(field, order)
     this.todoListElement.innerHTML = this.createTodos();
   }
+
 
   initEventHandlers() {
     // TODO -> event handlers einzelne auslagern ?! sonst hier riesen funktion
@@ -172,7 +173,8 @@ export default class TodoViewController {
       this.renderTodos();
     });
 
-    this.todoListElement.addEventListener("click", (event) => {
+
+    this.todoListElement.addEventListener("click", async (event) => {
       const targetButton = event.target.closest("button");
       if (!targetButton) {
         return;
@@ -183,17 +185,8 @@ export default class TodoViewController {
         todoItem.classList.add("deleting");
         // timeout for the delete animation
         setTimeout(() => {
-          this.todoStore
-            .deleteTodo(todoGuid)
-            .then(() => {
-              this.renderTodos();
-            })
-            .catch((rejection) => {
-              window.alert(rejection);
-            });
-        todoService.deleteTodo(todoGuid)
-
-
+          todoService.deleteTodo(todoGuid)
+            this.renderTodos();
         }, 500);
       } else if (action === "edit") {
         window.location.href = `form.html?guid=${todoGuid}`;
@@ -205,32 +198,31 @@ export default class TodoViewController {
         existingPopups.forEach((popup) => popup.remove());
 
         // Open new popup
-        const popupHtml = TodoViewController.createTodoPopUp(
-          todoService.getTodoById(todoGuid) //TODO: awwait ?
+        const targetTodo = await todoService.getTodoById(todoGuid);
+        const popupHtml = TodoViewController.createTodoPopUp(targetTodo
         );
         document.body.insertAdjacentHTML("beforeend", popupHtml);
       }
     });
 
-    this.todoListElement.addEventListener("change", (event) => {
+    this.todoListElement.addEventListener("change", async (event) => {
       if (event.target.type === "checkbox") {
+        console.log('updatetest')
         const guid = event.target.dataset.todoGuid;
-        const todo = todoService.getTodoById(guid);
-        if (todo) {
-          // TODO: duplicate.. update better?!?
-          const updateParams = {
-            title: todo.title,
-            description: todo.description,
-            dueDate: todo.dueDate,
-            importance: todo.importance,
-            finished: event.target.checked,
-          };
-          //this.todoStore.updateTodo(guid, updateParams);
-          todoService.updateTodo(guid, updateParams);
+        console.log(guid)
+        // todo work here
+        // const todo = todoService.getTodoById(guid);
+        // const todoItem = new Todo(...todo)
+        // todoItem.finished = event.target.checked;
+        // console.log('new todoItem:', todoItem)
+        console.log({"guid": guid, "finished": event.target.checked})
+        await todoService.updateTodo(guid, { "guid": guid, "finished": event.target.checked});
+
         }
         this.renderTodos();
-      }
-    });
+
+
+      });
 
     document.body.addEventListener("click", (event) => {
       const targetButton = event.target.closest(".popup-close");
@@ -295,7 +287,6 @@ export default class TodoViewController {
     return "later";
   }
 
-
   static createStars(count) {
     let starsHtml = "";
     for (let i = 1; i <= 5; i++) {
@@ -330,8 +321,6 @@ export default class TodoViewController {
     `;
   }
 
-
-
   renderSortButtons() {
     this.sortersContainer.innerHTML = TodoViewController.createSortButtons();
   }
@@ -342,7 +331,6 @@ export default class TodoViewController {
     this.renderSortButtons();
     this.renderTodos();
   }
-
 
 }
 
