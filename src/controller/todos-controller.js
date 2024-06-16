@@ -17,6 +17,10 @@ export class TodosController {
   deleteTodo = async (req, res) => {
     res.json(await todoStore.delete(req.params.id)); //TODO guid or ID ?
   }
+
+  updateTodo = async (req,res) => {
+    res.json(await todoStore.update(req.body));
+  }
 }
 
 export const todosController = new TodosController();

@@ -1,32 +1,121 @@
-import { TodoStore } from "../services/stores/todo-store.js";
 import ThemeController from "../utils/themecontroll.js";
 import { todoService } from "../services/todo-service.js";
 
-export default class TodoController {
+export default class TodoViewController {
+
   constructor() {
-    this.todoStore = new TodoStore();
     this.themeController = new ThemeController();
     this.todoListElement = document.querySelector("#todo-list");
     this.sortersContainer = document.querySelector(".sorters");
+    this.todos = [];
+  }
+
+  async loadTodos() {
+    this.todos = await todoService.getTodos();
+  }
+
+  createTodos(){
+    return this.todos
+      .map((todo) => {
+        const isPastDue = todo.dueDate && new Date(todo.dueDate) < new Date();
+        return `<li class="todo-list-item">
+              <div class="todo-checkbox">
+                <input data-todo-guid=${todo.guid} type="checkbox" ${
+          todo.finished ? "checked" : ""
+        }/>
+              </div>
+              <div class="todo-title">
+                <h3>${todo.title}</h3>
+              </div>
+               <div class="todo-duedate ${isPastDue ? "past-due" : ""}">
+                <p>${TodoViewController.reformatDate(todo.dueDate)}</p>
+              </div>
+              <div class="todo-importance">
+                ${TodoViewController.createStars(todo.importance)}
+              </div>
+              <div class="todo-button-group">
+                <div class="todo-details">
+                  <button type="button" class="button-details" data-action="details" data-todo-guid=${
+          todo.guid
+        }>
+                    <span class="material-symbols-outlined">more_horiz</span>
+                  </button>
+                </div>
+                <div class="todo-edit">
+                  <button type="button" class="button-edit" data-action="edit" data-todo-guid=${
+          todo.guid
+        }>
+                    <span class="material-symbols-outlined">edit</span>
+                  </button>
+                </div>
+                <div class="todo-delete">
+                  <button type="button" class="button-delete" data-action="delete" data-todo-guid=${
+          todo.guid
+        }>
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </li>`;
+      })
+      .join("");
+  }
+
+  sortTodos(field, order = "asc") {
+    function compareText(a, b) {
+      return b[field].localeCompare(a[field]);
+    }
+
+    function compareNumber(a, b) {
+      return a[field] - b[field];
+    }
+
+    function compareDates(a, b) {
+      return new Date(a[field]) - new Date(b[field]);
+    }
+
+    let compareFunction;
+
+    switch (field) {
+      case "id":
+        compareFunction = compareNumber;
+        break;
+      case "title":
+        compareFunction = compareText;
+        break;
+      case "description":
+        compareFunction = compareText;
+        break;
+      case "dueDate":
+        compareFunction = compareDates;
+        break;
+      case "createdAt":
+        compareFunction = compareDates;
+        break;
+      case "importance":
+        compareFunction = compareNumber;
+        break;
+
+      default:
+        throw new Error(`Invalid field: ${field}`);
+    }
+
+    const sortedTodos = [...this.todos].sort(compareFunction);
+
+    if (order === "desc") {
+      sortedTodos.reverse();
+    }
+    this.todos = sortedTodos;
+  }
+
+  async renderTodos(field = "id", order = "asc") {
+    await this.loadTodos();
+    await this.sortTodos(field, order)
+    this.todoListElement.innerHTML = this.createTodos();
   }
 
   initEventHandlers() {
-
-    const testbtn = document.querySelector(".testbutton")
-    console.log(testbtn)
-    testbtn.addEventListener("click", ()=>{
-      console.log("test")
-      todoService.createTodo({"title": "test", "description": "test", "dueDate": "2021-06-01", "importance": 3, "finished": false});
-    })
-
-    /** testbtn.addEventListener("click", async()=>{
-      // TODO: send todo-object oder nur die props dafür ? wo soll das erstellt werden
-      const randTodo = new Todo(
-        5, "test", "desctest", Date.now(), null, null, 3, false,"123-321"
-      )
-      await todoService.createTodo(randTodo)
-    })*/
-
     // TODO -> event handlers einzelne auslagern ?! sonst hier riesen funktion
 
     const sorterDiv = document.querySelector(".sorters");
@@ -45,8 +134,7 @@ export default class TodoController {
         activeButton.classList.add("active");
         activeButton.dataset.sortorder = newSortOrder;
 
-        this.todoStore.sort(field, order);
-        this.renderTodos();
+        this.renderTodos(field, order);
       }
     });
 
@@ -54,7 +142,6 @@ export default class TodoController {
     filterButton.addEventListener("click", (event) => {
       const { state } = event.target.dataset;
       const newState = state === "off" ? "on" : "off";
-      this.todoStore.filter(newState);
       this.renderTodos();
 
       const targetFilter = event.target;
@@ -94,8 +181,8 @@ export default class TodoController {
         existingPopups.forEach((popup) => popup.remove());
 
         // Open new popup
-        const popupHtml = TodoController.createTodoPopUp(
-          this.todoStore.getTodo(todoGuid)
+        const popupHtml = TodoViewController.createTodoPopUp(
+          todoService.getTodoById(todoGuid) //TODO: awwait ?
         );
         document.body.insertAdjacentHTML("beforeend", popupHtml);
       }
@@ -104,7 +191,7 @@ export default class TodoController {
     this.todoListElement.addEventListener("change", (event) => {
       if (event.target.type === "checkbox") {
         const guid = event.target.dataset.todoGuid;
-        const todo = this.todoStore.getTodo(guid);
+        const todo = todoService.getTodoById(guid);
         if (todo) {
           // TODO: duplicate.. update better?!?
           const updateParams = {
@@ -114,7 +201,8 @@ export default class TodoController {
             importance: todo.importance,
             finished: event.target.checked,
           };
-          this.todoStore.updateTodo(guid, updateParams);
+          //this.todoStore.updateTodo(guid, updateParams);
+          todoService.updateTodo(guid, updateParams);
         }
         this.renderTodos();
       }
@@ -184,8 +272,6 @@ export default class TodoController {
   }
 
 
-
-
   static createStars(count) {
     let starsHtml = "";
     for (let i = 1; i <= 5; i++) {
@@ -198,54 +284,6 @@ export default class TodoController {
       }
     }
     return starsHtml;
-  }
-
-  createTodos() {
-    return this.todoStore.visibleItems
-      .map((todo) => {
-        const isPastDue = todo.dueDate && new Date(todo.dueDate) < new Date();
-        return `<li class="todo-list-item">
-              <div class="todo-checkbox">
-                <input data-todo-guid=${todo.guid} type="checkbox" ${
-          todo.finished ? "checked" : ""
-        }/>
-              </div>
-              <div class="todo-title">
-                <h3>${todo.title}</h3>
-              </div>
-               <div class="todo-duedate ${isPastDue ? "past-due" : ""}">
-                <p>${TodoController.reformatDate(todo.dueDate)}</p>
-              </div>
-              <div class="todo-importance">
-                ${TodoController.createStars(todo.importance)}
-              </div>
-              <div class="todo-button-group">
-                <div class="todo-details">
-                  <button type="button" class="button-details" data-action="details" data-todo-guid=${
-                    todo.guid
-                  }>
-                    <span class="material-symbols-outlined">more_horiz</span>
-                  </button>
-                </div>
-                <div class="todo-edit">
-                  <button type="button" class="button-edit" data-action="edit" data-todo-guid=${
-                    todo.guid
-                  }>
-                    <span class="material-symbols-outlined">edit</span>
-                  </button>
-                </div>
-                <div class="todo-delete">
-                  <button type="button" class="button-delete" data-action="delete" data-todo-guid=${
-                    todo.guid
-                  }>
-                    <span class="material-symbols-outlined">delete</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </li>`;
-      })
-      .join("");
   }
 
   static createTodoPopUp(todo) {
@@ -268,73 +306,20 @@ export default class TodoController {
     `;
   }
 
-  async renderTodos() {
-    // this.todoListElement.innerHTML = this.createTodos();
-    this.todoListElement.innerHTML = await TodoController.testcreateTodos();
-  }
+
 
   renderSortButtons() {
-    this.sortersContainer.innerHTML = TodoController.createSortButtons();
+    this.sortersContainer.innerHTML = TodoViewController.createSortButtons();
   }
 
   async initialize() {
     this.initEventHandlers();
     this.themeController.initialize();
-    await this.todoStore.ready;
-    this.renderTodos();
     this.renderSortButtons();
+    this.renderTodos();
   }
 
-  static async testcreateTodos(){
-    const todos = await todoService.getTodos();
-    console.log(todos)
 
-    return todos
-      .map((todo) => {
-        const isPastDue = todo.dueDate && new Date(todo.dueDate) < new Date();
-        return `<li class="todo-list-item">
-              <div class="todo-checkbox">
-                <input data-todo-guid=${todo.guid} type="checkbox" ${
-          todo.finished ? "checked" : ""
-        }/>
-              </div>
-              <div class="todo-title">
-                <h3>${todo.title}</h3>
-              </div>
-               <div class="todo-duedate ${isPastDue ? "past-due" : ""}">
-                <p>${TodoController.reformatDate(todo.dueDate)}</p>
-              </div>
-              <div class="todo-importance">
-                ${TodoController.createStars(todo.importance)}
-              </div>
-              <div class="todo-button-group">
-                <div class="todo-details">
-                  <button type="button" class="button-details" data-action="details" data-todo-guid=${
-          todo.guid
-        }>
-                    <span class="material-symbols-outlined">more_horiz</span>
-                  </button>
-                </div>
-                <div class="todo-edit">
-                  <button type="button" class="button-edit" data-action="edit" data-todo-guid=${
-          todo.guid
-        }>
-                    <span class="material-symbols-outlined">edit</span>
-                  </button>
-                </div>
-                <div class="todo-delete">
-                  <button type="button" class="button-delete" data-action="delete" data-todo-guid=${
-          todo.guid
-        }>
-                    <span class="material-symbols-outlined">delete</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </li>`;
-      })
-      .join("");
-  }
 }
 
-new TodoController().initialize();
+new TodoViewController().initialize();
