@@ -1,5 +1,5 @@
-{
-  "sample-todos": [
+export default
+[
     {
       "id": 1,
       "title": "SampleToDo",
@@ -45,4 +45,3 @@
       "guid": "286f4fb8-1ef3-429a-952d-baa47b894d47"
     }
   ]
-}

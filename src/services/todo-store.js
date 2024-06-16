@@ -1,9 +1,16 @@
 import Datastore from 'nedb-promises';
+import fs from "fs";
 import { Todo } from "../models/todo.js";
+import sampleData from "../data/todo-sample-data.js";
+
 
 export class TodoStore {
   constructor(db) {
     this.db = db || new Datastore({ filename: './src/data/todos.db', autoload: true });
+
+    if(!fs.existsSync('./src/data/todos.db')) {
+      this.loadSampleTodos();
+    }
   }
 
   async get(guid) {
@@ -41,6 +48,26 @@ export class TodoStore {
   async highestId() {
     const todos = await this.getAll();
     return todos.reduce((max, todo) => Math.max(max, todo.id), 0);
+  }
+
+  loadSampleTodos() {
+    sampleData.forEach((todo) => {
+      const sampleTodo = new Todo(
+        todo.id,
+        todo.title,
+        todo.description,
+        todo.dueDate,
+        todo.importance,
+        todo.finished
+      );
+
+      sampleTodo.createAt = todo.createdAt;
+      sampleTodo.updatedAt = todo.updatedAt;
+      sampleTodo.guid = todo.guid;
+
+      this.add(sampleTodo).then();
+
+    });
   }
 }
 
