@@ -7,15 +7,18 @@ export default class TodoViewController {
     this.themeController = new ThemeController();
     this.todoListElement = document.querySelector("#todo-list");
     this.sortersContainer = document.querySelector(".sorters");
+    this.filterState = false;
     this.todos = [];
+    this.visibleItems = [];
   }
 
   async loadTodos() {
     this.todos = await todoService.getTodos();
+    this.visibleItems = this.todos;
   }
 
   createTodos(){
-    return this.todos
+    return this.visibleItems
       .map((todo) => {
         const isPastDue = todo.dueDate && new Date(todo.dueDate) < new Date();
         return `<li class="todo-list-item">
@@ -106,12 +109,25 @@ export default class TodoViewController {
     if (order === "desc") {
       sortedTodos.reverse();
     }
-    this.todos = sortedTodos;
+    this.visibleItems = sortedTodos;
+  }
+
+  filterTodos(state) {
+    if (state === "off") {
+      this.visibleItems = this.todos;
+    } else if (state === "on") {
+      this.visibleItems = this.todos.filter((todo) => !todo.finished);
+    } else {
+      throw new Error(`Invalid state: ${state}`);
+    }
   }
 
   async renderTodos(field = "id", order = "asc") {
     await this.loadTodos();
     await this.sortTodos(field, order)
+    if (this.filterState){
+      this.filterTodos("on")
+    }
     this.todoListElement.innerHTML = this.createTodos();
   }
 
@@ -141,11 +157,19 @@ export default class TodoViewController {
     const filterButton = document.querySelector(".filters");
     filterButton.addEventListener("click", (event) => {
       const { state } = event.target.dataset;
+      console.log('state:', state)
+
+      if (state === "off"){
+        this.filterState = true;
+      } else if (state === "on"){
+        this.filterState = false;
+      }
       const newState = state === "off" ? "on" : "off";
-      this.renderTodos();
 
       const targetFilter = event.target;
-      targetFilter.dataset.state = newState === "on" ? "All" : "Filter";
+      targetFilter.textContent = newState === "on" ? "All" : "Filter";
+      targetFilter.dataset.state = newState === "on" ? "on" : "off";
+      this.renderTodos();
     });
 
     this.todoListElement.addEventListener("click", (event) => {
