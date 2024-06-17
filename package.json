@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "express": "^4.19.2",
-    "nedb-promises": "^6.2.3"
+    "nedb-promises": "^6.2.3",
+    "body-parser": "^1.20.2"
   }
 }
