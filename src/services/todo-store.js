@@ -14,7 +14,11 @@ export class TodoStore {
   }
 
   async get(guid) {
-    const { _id } = await this.db.findOne({ guid });
+    const dbItem = await this.db.findOne({ guid });
+    if(!dbItem){
+      return null;
+    }
+    const { _id } = dbItem;
     return this.db.findOne({_id });
   }
 
@@ -35,7 +39,7 @@ export class TodoStore {
   }
 
   async update(todo) {
-    const { _id } = await this.get(todo.guid)
+    const { _id } = await this.get(todo.guid);
     const updateData = {...todo}
     updateData.updatedAt = Date.now();
     await this.db.updateOne(
