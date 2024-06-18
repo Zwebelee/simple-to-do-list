@@ -13,11 +13,11 @@ export class Todo {
     this.id = id;
     this.title = title;
     this.description = description;
-    this.createdAt = createdAt
-    this.updatedAt = updatedAt
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
     this.dueDate = dueDate;
     this.importance = importance;
     this.finished = finished;
-    this.guid = guid
+    this.guid = guid;
   }
 }

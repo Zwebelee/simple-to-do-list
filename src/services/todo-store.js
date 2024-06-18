@@ -1,25 +1,25 @@
-import Datastore from 'nedb-promises';
-import fs from 'fs';
-import { Todo } from '../models/todo.js';
-import sampleData from '../data/todo-sample-data.js';
+import Datastore from "nedb-promises";
+import fs from "fs";
+import { Todo } from "../models/todo.js";
+import sampleData from "../data/todo-sample-data.js";
 
 
 export class TodoStore {
   constructor(db) {
-    this.db = db || new Datastore({ filename: './src/data/todos.db', autoload: true });
+    this.db = db || new Datastore({ filename: "./src/data/todos.db", autoload: true });
 
-    if(!fs.existsSync('./src/data/todos.db')) {
+    if (!fs.existsSync("./src/data/todos.db")) {
       this.loadSampleTodos();
     }
   }
 
   async get(guid) {
     const dbItem = await this.db.findOne({ guid });
-    if(!dbItem){
+    if (!dbItem) {
       return null;
     }
     const { _id } = dbItem;
-    return this.db.findOne({_id });
+    return this.db.findOne({ _id });
   }
 
   async getAll() {
@@ -27,7 +27,7 @@ export class TodoStore {
   }
 
   async add(todo) {
-    const {title, description, dueDate, importance, finished} = todo;
+    const { title, description, dueDate, importance, finished } = todo;
     const id = await this.highestId() + 1;
     const newTodo = new Todo(id, title, description, dueDate, importance, finished);
     return this.db.insert(newTodo);
@@ -40,12 +40,12 @@ export class TodoStore {
 
   async update(todo) {
     const { _id } = await this.get(todo.guid);
-    const updateData = {...todo}
+    const updateData = { ...todo };
     updateData.updatedAt = new Date().toISOString();
     await this.db.updateOne(
-      {_id},
-      {$set: updateData},
-      {returnUpdatedDocs: true}
+      { _id },
+      { $set: updateData },
+      { returnUpdatedDocs: true }
     );
   }
 
