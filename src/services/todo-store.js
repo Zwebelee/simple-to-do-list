@@ -1,7 +1,7 @@
 import Datastore from 'nedb-promises';
-import fs from "fs";
-import { Todo } from "../models/todo.js";
-import sampleData from "../data/todo-sample-data.js";
+import fs from 'fs';
+import { Todo } from '../models/todo.js';
+import sampleData from '../data/todo-sample-data.js';
 
 
 export class TodoStore {
@@ -41,18 +41,12 @@ export class TodoStore {
   async update(todo) {
     const { _id } = await this.get(todo.guid);
     const updateData = {...todo}
-    updateData.updatedAt = Date.now();
+    updateData.updatedAt = new Date().toISOString();
     await this.db.updateOne(
       {_id},
       {$set: updateData},
       {returnUpdatedDocs: true}
     );
-  }
-
-  async validate(guid) {
-    const todo = await this.db.findOne({ _id: guid });
-    return todo !== null;
-
   }
 
   async highestId() {

@@ -3,7 +3,7 @@ export default
     {
       "id": 1,
       "title": "SampleToDo",
-      "description": "something todo",
+      "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
       "createdAt": "2024-05-02T14:30:00Z",
       "updatedAt": null,
       "dueDate": "2024-05-02",
@@ -13,19 +13,19 @@ export default
     },
     {
       "id": 2,
-      "title": "SampleElseToDo",
-      "description": "something else todo",
+      "title": "Another Todo",
+      "description": "Finalize the project proposal, prepare for the team meeting, respond to client emails, grocery shopping, morning jog, yoga session, clean the living room, do laundry, organize the garage, water plants.",
       "createdAt": "2023-05-02T14:30:00Z",
       "updatedAt": null,
       "dueDate": "2024-05-12",
       "importance": 1,
-      "finished": false,
+      "finished": true,
       "guid": "c3491f73-3f4d-4dd8-a45b-79cbcc77d623"
     },
     {
       "id": 3,
       "title": "Dont forget",
-      "description": "i forgot",
+      "description": "damn....I forgot anyway",
       "createdAt": "2024-01-016T18:30:00Z",
       "updatedAt": "2024-01-023T18:30:00Z",
       "dueDate": "2024-05-02",
@@ -36,7 +36,7 @@ export default
     {
       "id": 4,
       "title": "A thing i need to do",
-      "description": "something todo123",
+      "description": "something else that is todo",
       "createdAt": "2024-03-025T09:30:00Z",
       "updatedAt": "2024-04-012T18:30:00Z",
       "dueDate": "null",

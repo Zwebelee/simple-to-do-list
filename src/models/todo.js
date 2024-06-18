@@ -6,7 +6,7 @@ export class Todo {
     dueDate,
     importance,
     finished,
-    createdAt = Date.now(),
+    createdAt = new Date().toISOString(),
     updatedAt = null,
     guid = crypto.randomUUID()
   ) {
