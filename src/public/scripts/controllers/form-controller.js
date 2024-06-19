@@ -69,7 +69,7 @@ export default class FormController {
     const todoData = {
       title: this.titleInput.value,
       description: this.descriptionInput.value,
-      dueDate: this.dueDateInput.value,
+      dueDate: this.dueDateInput.value === "" ? null : this.dueDateInput.value,
       importance: this.importanceInput.value,
       finished: this.finishedInput.checked
     };

@@ -36,9 +36,9 @@ export default [
     "id": 4,
     "title": "A thing i need to do",
     "description": "something else that is todo",
-    "createdAt": "2024-03-025T09:30:00Z",
+    "createdAt": "2024-03-021T09:30:00Z",
     "updatedAt": "2024-04-012T18:30:00Z",
-    "dueDate": "null",
+    "dueDate": null,
     "importance": 4,
     "finished": false,
     "guid": "286f4fb8-1ef3-429a-952d-baa47b894d47"
