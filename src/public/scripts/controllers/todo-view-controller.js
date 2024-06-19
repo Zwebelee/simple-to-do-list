@@ -4,6 +4,7 @@ import { todoService } from "../services/todo-service.js";
 export default class TodoViewController {
 
   constructor() {
+    this.docbody = document.body;
     this.themeController = new ThemeController();
     this.todoListElement = document.querySelector("#todo-list");
     this.sortersContainer = document.querySelector(".sorters");
@@ -12,18 +13,128 @@ export default class TodoViewController {
     this.visibleItems = [];
   }
 
+  async initialize() {
+    this.initEventHandlers();
+    this.themeController.initialize();
+    this.renderSortButtons();
+    await this.renderTodos();
+  }
+
+  initEventHandlers() {
+    this.initSortEvent();
+    this.initFilterEvent();
+    this.initActionButtonGroupEvent();
+    this.initTodoCheckboxEvent();
+    this.initPopUpEvent();
+  }
+
+  initSortEvent() {
+    const sorterDiv = document.querySelector(".sorters");
+    sorterDiv.addEventListener("click", async (event) => {
+      if (event.target.tagName === "BUTTON") {
+        const { field, sortorder } = event.target.dataset;
+        const order = event.target.dataset.sortorder;
+
+        const sortButtons = document.querySelectorAll(".sortbutton");
+        sortButtons.forEach((button) => {
+          button.classList.remove("active");
+        });
+
+        const activeButton = event.target;
+        const newSortOrder = sortorder === "asc" ? "desc" : "asc";
+        activeButton.classList.add("active");
+        activeButton.dataset.sortorder = newSortOrder;
+
+        await this.renderTodos(field, order);
+      }
+    });
+  }
+
+  initFilterEvent() {
+    const filterButton = document.querySelector(".filters");
+    filterButton.addEventListener("click", async (event) => {
+      const { state } = event.target.dataset;
+
+      if (state === "off") {
+        this.filterState = true;
+      } else if (state === "on") {
+        this.filterState = false;
+      }
+      const newState = state === "off" ? "on" : "off";
+
+      const targetFilter = event.target;
+      targetFilter.textContent = newState === "on" ? "All" : "Filter";
+      targetFilter.dataset.state = newState === "on" ? "on" : "off";
+      await this.renderTodos();
+    });
+  }
+
+  initTodoCheckboxEvent() {
+    this.todoListElement.addEventListener("change", async (event) => {
+      if (event.target.type === "checkbox") {
+        const guid = event.target.dataset.todoGuid;
+        await todoService.updateTodo(guid, { "guid": guid, "finished": event.target.checked });
+      }
+      await this.renderTodos();
+    });
+  }
+
+  initPopUpEvent() {
+    this.docbody.addEventListener("click", (event) => {
+      const targetButton = event.target.closest(".popup-close");
+      if (targetButton) {
+        event.preventDefault();
+        const popup = targetButton.closest(".popup");
+        popup.remove();
+      }
+    });
+  }
+
+  initActionButtonGroupEvent() {
+    this.todoListElement.addEventListener("click", async (event) => {
+      const targetButton = event.target.closest("button");
+      if (!targetButton) {
+        return;
+      }
+      const { todoGuid, action } = targetButton.dataset;
+      if (action === "delete") {
+        const todoItem = targetButton.closest(".todo-list-item");
+        todoItem.classList.add("deleting");
+        // timeout for the delete animation
+        setTimeout(() => {
+          todoService.deleteTodo(todoGuid);
+          this.renderTodos();
+        }, 500);
+      } else if (action === "edit") {
+        window.location.href = `form.html?guid=${todoGuid}`;
+      } else if (action === "details") {
+        event.preventDefault();
+
+        // Close any existing popups first
+        const existingPopups = document.querySelectorAll(".popup");
+        existingPopups.forEach((popup) => popup.remove());
+
+        // Open new popup
+        const targetTodo = await todoService.getTodoById(todoGuid);
+        const popupHtml = TodoViewController.createTodoPopUp(targetTodo
+        );
+        this.docbody.insertAdjacentHTML("beforeend", popupHtml);
+      }
+    });
+  }
+
   async loadTodos() {
     this.todos = await todoService.getTodos();
     this.visibleItems = this.todos;
   }
 
-  createTodos(){
+  createTodos() {
     return this.visibleItems
       .map((todo) => {
         const isPastDue = todo.dueDate && new Date(todo.dueDate) < new Date();
         return `<li class="todo-list-item">
               <div class="todo-checkbox">
-                <input data-todo-guid=${todo.guid} type="checkbox" ${
+                <input id=${todo.guid} data-todo-guid=${todo.guid} type="checkbox" ${
           todo.finished ? "checked" : ""
         }/>
               </div>
@@ -75,6 +186,15 @@ export default class TodoViewController {
     }
 
     function compareDates(a, b) {
+      if (a[field] === null && b[field] === null) {
+        return 0;
+      }
+      if (a[field] === null) {
+        return 1;
+      }
+      if (b[field] === null) {
+        return -1;
+      }
       return new Date(a[field]) - new Date(b[field]);
     }
 
@@ -104,7 +224,7 @@ export default class TodoViewController {
         throw new Error(`Invalid field: ${field}`);
     }
 
-    const sortedTodos = [...this.todos].sort(compareFunction);
+    const sortedTodos = [...this.visibleItems].sort(compareFunction);
 
     if (order === "desc") {
       sortedTodos.reverse();
@@ -124,122 +244,19 @@ export default class TodoViewController {
 
   async renderTodos(field = "id", order = "asc") {
     await this.loadTodos();
-    if (this.filterState){
-      this.filterTodos("on")
+    if (this.filterState) {
+      this.filterTodos("on");
     }
-    await this.sortTodos(field, order)
+    await this.sortTodos(field, order);
     this.todoListElement.innerHTML = this.createTodos();
-  }
-
-
-  initEventHandlers() {
-    // TODO -> event handlers einzelne auslagern ?! sonst hier riesen funktion
-
-    const sorterDiv = document.querySelector(".sorters");
-    sorterDiv.addEventListener("click", (event) => {
-      if (event.target.tagName === "BUTTON") {
-        const { field, sortorder } = event.target.dataset;
-        const order = event.target.dataset.sortorder;
-
-        const sortButtons = document.querySelectorAll(".sortbutton");
-        sortButtons.forEach((button) => {
-          button.classList.remove("active");
-        });
-
-        const activeButton = event.target;
-        const newSortOrder = sortorder === "asc" ? "desc" : "asc";
-        activeButton.classList.add("active");
-        activeButton.dataset.sortorder = newSortOrder;
-
-        this.renderTodos(field, order);
-      }
-    });
-
-    const filterButton = document.querySelector(".filters");
-    filterButton.addEventListener("click", (event) => {
-      const { state } = event.target.dataset;
-      console.log('state:', state)
-
-      if (state === "off"){
-        this.filterState = true;
-      } else if (state === "on"){
-        this.filterState = false;
-      }
-      const newState = state === "off" ? "on" : "off";
-
-      const targetFilter = event.target;
-      targetFilter.textContent = newState === "on" ? "All" : "Filter";
-      targetFilter.dataset.state = newState === "on" ? "on" : "off";
-      this.renderTodos();
-    });
-
-
-    this.todoListElement.addEventListener("click", async (event) => {
-      const targetButton = event.target.closest("button");
-      if (!targetButton) {
-        return;
-      }
-      const { todoGuid, action } = targetButton.dataset;
-      if (action === "delete") {
-        const todoItem = targetButton.closest(".todo-list-item");
-        todoItem.classList.add("deleting");
-        // timeout for the delete animation
-        setTimeout(() => {
-          todoService.deleteTodo(todoGuid)
-            this.renderTodos();
-        }, 500);
-      } else if (action === "edit") {
-        window.location.href = `form.html?guid=${todoGuid}`;
-      } else if (action === "details") {
-        event.preventDefault();
-
-        // Close any existing popups
-        const existingPopups = document.querySelectorAll(".popup");
-        existingPopups.forEach((popup) => popup.remove());
-
-        // Open new popup
-        const targetTodo = await todoService.getTodoById(todoGuid);
-        const popupHtml = TodoViewController.createTodoPopUp(targetTodo
-        );
-        document.body.insertAdjacentHTML("beforeend", popupHtml);
-      }
-    });
-
-    this.todoListElement.addEventListener("change", async (event) => {
-      if (event.target.type === "checkbox") {
-        console.log('updatetest')
-        const guid = event.target.dataset.todoGuid;
-        console.log(guid)
-        // todo work here
-        // const todo = todoService.getTodoById(guid);
-        // const todoItem = new Todo(...todo)
-        // todoItem.finished = event.target.checked;
-        // console.log('new todoItem:', todoItem)
-        console.log({"guid": guid, "finished": event.target.checked})
-        await todoService.updateTodo(guid, { "guid": guid, "finished": event.target.checked});
-
-        }
-        this.renderTodos();
-
-
-      });
-
-    document.body.addEventListener("click", (event) => {
-      const targetButton = event.target.closest(".popup-close");
-      if (targetButton) {
-        event.preventDefault();
-        const popup = targetButton.closest(".popup");
-        popup.remove();
-      }
-    });
   }
 
   static createSortButtons() {
     const sortButtons = [
       { field: "title", alias: "Title", sortorder: "desc" },
-      { field: "dueDate", alias: "Date", sortorder: "desc" },
+      { field: "dueDate", alias: "UpNext", sortorder: "asc" },
       { field: "createdAt", alias: "Created", sortorder: "desc" },
-      { field: "importance", alias: "Importance", sortorder: "desc" },
+      { field: "importance", alias: "Importance", sortorder: "desc" }
     ];
 
     return sortButtons
@@ -292,10 +309,10 @@ export default class TodoViewController {
     for (let i = 1; i <= 5; i++) {
       if (i <= count) {
         starsHtml +=
-          '<span class="material-symbols-outlined star-icon colored-star">kid_star</span>';
+          "<span class=\"material-symbols-outlined star-icon colored-star\">kid_star</span>";
       } else {
         starsHtml +=
-          '<span class="material-symbols-outlined star-icon empty-star">kid_star</span>';
+          "<span class=\"material-symbols-outlined star-icon empty-star\">kid_star</span>";
       }
     }
     return starsHtml;
@@ -309,14 +326,13 @@ export default class TodoViewController {
             <p>Description: ${todo.description ? todo.description : "-"}</p>
             <p>Due date: ${todo.dueDate ? todo.dueDate : "-"}</p>
             <p>Importance: ${todo.importance}</p>
-            <p>Finished: ${todo.finished ? "Yes" : "No"}</p>
-            <p>ID: ${todo.id}</p>
-            <p>GUID: ${todo.guid}</p>
+            <p>Finished: ${todo.finished ? "yes" : "no"}</p>
             <p>Created at: ${new Date(todo.createdAt).toLocaleString()}</p>
             <p>Updated at: ${
-              todo.updatedAt ? new Date(todo.updatedAt).toLocaleString() : "-"
-            }</p>
-            
+      todo.updatedAt ? new Date(todo.updatedAt).toLocaleString() : "never"
+    }</p>
+             <p>ID: ${todo.id}</p>
+            <p>GUID: ${todo.guid}</p>
         </div>
     `;
   }
@@ -324,14 +340,6 @@ export default class TodoViewController {
   renderSortButtons() {
     this.sortersContainer.innerHTML = TodoViewController.createSortButtons();
   }
-
-  async initialize() {
-    this.initEventHandlers();
-    this.themeController.initialize();
-    this.renderSortButtons();
-    this.renderTodos();
-  }
-
 }
 
-new TodoViewController().initialize();
+new TodoViewController().initialize().then();

@@ -3,7 +3,7 @@
 import ThemeController from "../utils/themecontroll.js";
 import { todoService } from "../services/todo-service.js";
 
-export default class FormController {
+export default class FormViewController {
   constructor() {
     this.themeController = new ThemeController();
 
@@ -102,4 +102,4 @@ export default class FormController {
   }
 }
 
-new FormController().initialize();
+new FormViewController().initialize();
