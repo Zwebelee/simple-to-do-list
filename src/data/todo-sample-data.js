@@ -5,7 +5,7 @@ export default [
     "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
     "createdAt": "2024-05-02T14:30:00Z",
     "updatedAt": null,
-    "dueDate": "2024-05-02",
+    "dueDate": "2024-07-02",
     "importance": 3,
     "finished": false,
     "guid": "6290969e-e73d-487d-8eb4-acb490e0a5fe"
@@ -16,7 +16,7 @@ export default [
     "description": "Finalize the project proposal, prepare for the team meeting, respond to client emails, grocery shopping, morning jog, yoga session, clean the living room, do laundry, organize the garage, water plants.",
     "createdAt": "2023-05-02T14:30:00Z",
     "updatedAt": null,
-    "dueDate": "2024-05-12",
+    "dueDate": "2024-06-30",
     "importance": 1,
     "finished": true,
     "guid": "c3491f73-3f4d-4dd8-a45b-79cbcc77d623"
