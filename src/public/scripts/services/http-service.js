@@ -1,5 +1,6 @@
 class HttpService {
 
+  // eslint-disable-next-line class-methods-use-this
   ajax(method, url, data) {
     return fetch(url, {
       method,
@@ -8,6 +9,7 @@ class HttpService {
     }).then(x => x.json());
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async fetch(method, url, data) {
     const response = await fetch(url, {
       method,
