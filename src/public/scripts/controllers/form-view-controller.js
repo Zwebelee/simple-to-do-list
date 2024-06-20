@@ -1,9 +1,9 @@
 /* global Handlebars */
 
-import todoStore from "../services/stores/todo-store.js";
 import ThemeController from "../utils/themecontroll.js";
+import { todoService } from "../services/todo-service.js";
 
-export default class FormController {
+export default class FormViewController {
   constructor() {
     this.themeController = new ThemeController();
 
@@ -18,12 +18,10 @@ export default class FormController {
   initialize() {
     window.onload = this.populateForm.bind(this);
     this.themeController.initialize();
-    if (this.form) {
-      this.form.addEventListener("submit", this.handleSubmit.bind(this));
-    }
+    this.form.addEventListener("submit", this.handleSubmit.bind(this));
   }
 
-  populateForm() {
+  async populateForm() {
     const urlParams = new URLSearchParams(window.location.search);
     const guid = urlParams.get("guid");
 
@@ -32,35 +30,31 @@ export default class FormController {
 
     let isUpdate = false;
 
-    // TODO: make a "getNode" on todostore -> get them from store, not from localstorage
-    // if guid is wrong -> warning / alert invalid guid
     if (guid) {
-      const todos = JSON.parse(localStorage.getItem("simple-todos"));
-      const targetTodo = todos.find((todo) => todo.guid === guid);
-      isUpdate = !!targetTodo;
+      const todo = await todoService.getTodoById(guid);
+      isUpdate = !!todo;
       const data = { isUpdate };
       document.querySelector(".form-row-submitting").innerHTML = template(data);
 
       const buttons = document.querySelectorAll(
-        '#form-submit[data-action="update"], #form-submit[data-action="add"]'
+        "#form-submit[data-action=\"update\"], #form-submit[data-action=\"add\"]"
       );
 
       buttons.forEach((button) => {
         button.addEventListener("click", () => {
           button.classList.add("clicked");
         });
-
         button.addEventListener("animationend", () => {
           button.classList.remove("clicked");
         });
       });
 
-      if (targetTodo) {
-        this.titleInput.value = targetTodo.title;
-        this.importanceInput.value = targetTodo.importance;
-        this.dueDateInput.value = targetTodo.dueDate;
-        this.finishedInput.checked = targetTodo.finished;
-        this.descriptionInput.value = targetTodo.description;
+      if (todo) {
+        this.titleInput.value = todo.title;
+        this.importanceInput.value = todo.importance;
+        this.dueDateInput.value = todo.dueDate;
+        this.finishedInput.checked = todo.finished;
+        this.descriptionInput.value = todo.description;
       }
     } else {
       const data = { isUpdate };
@@ -68,36 +62,33 @@ export default class FormController {
     }
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
     const { action } = document.activeElement.dataset;
 
+    const todoData = {
+      title: this.titleInput.value,
+      description: this.descriptionInput.value,
+      dueDate: this.dueDateInput.value === "" ? null : this.dueDateInput.value,
+      importance: this.importanceInput.value,
+      finished: this.finishedInput.checked
+    };
+
     if (action === "add" || action === "addAndReturn") {
-      todoStore.addTodo(
-        this.titleInput.value,
-        this.descriptionInput.value,
-        this.dueDateInput.value,
-        this.importanceInput.value,
-        this.finishedInput.checked
-      );
+      await todoService.createTodo(todoData);
       if (action === "add") {
         this.resetForm();
       } else {
         window.location.href = "index.html";
       }
+
     } else if (action === "update" || action === "updateAndReturn") {
       const urlParams = new URLSearchParams(window.location.search);
       const guid = urlParams.get("guid");
       if (guid) {
-        if (todoStore.checkGuid(guid)) {
-          const updateParams = {
-            title: this.titleInput.value,
-            description: this.descriptionInput.value,
-            dueDate: this.dueDateInput.value,
-            importance: this.importanceInput.value,
-            finished: this.finishedInput.checked,
-          };
-          todoStore.updateTodo(guid, updateParams);
+        if (await todoService.getTodoById(guid)) {
+          todoData.guid = guid;
+          await todoService.updateTodo(guid, todoData);
           if (action !== "update") {
             window.location.href = "index.html";
           }
@@ -111,4 +102,4 @@ export default class FormController {
   }
 }
 
-new FormController().initialize();
+new FormViewController().initialize();

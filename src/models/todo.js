@@ -1,14 +1,14 @@
-export default class Todo {
+export class Todo {
   constructor(
     id,
     title,
     description,
-    createdAt,
     dueDate,
-    updatedAt,
     importance,
     finished,
-    guid
+    createdAt = new Date().toISOString(),
+    updatedAt = null,
+    guid = crypto.randomUUID()
   ) {
     this.id = id;
     this.title = title;

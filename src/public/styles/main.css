@@ -1,17 +1,18 @@
 :root {
-    --primary: #9026d7;
+    --primary: #00f;
     --secondary: #0ff;
-    --suceess: #0f0;
+    --suceess: #28a745;
     --warning: #ffaf02;
-    --danger: #ff5b57;
+    --danger: #dc3545;
     --light: #eee;
-    --dark: #313154;
+    --dark: #343a40;
     --background: #fff;
     --foreground: #000;
     --text: #000;
-    --shadow: 0 1px 3px rgb(0 0 0 / 10%);
     --fullfilled: #da9604;
+    --shadow: 0 1px 3px rgb(0 0 0 / 10%);
     --empty: rgb(99 97 97 / 50%);
+    --switch: var(--dark);
 }
 
 * {
@@ -27,19 +28,25 @@ body {
     border: 0.1rem solid black;
     border-radius: 0.8rem;
     background-color: var(--background);
-    color: var(--dark);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
 body.dark-theme {
     --primary: #d6ec1b;
     --secondary: #0f24ae;
-    --light: #eee;
+    --suceess: #28a745;
+    --warning: #ffaf02;
+    --danger: #f00;
+    --light: #6c757d;
     --dark: #313154;
-    --danger: #ffaf02;
+    --background: var(--dark);
+    --foreground: #000;
+    --text: var(--primary);
+    --fullfilled: #da9604;
     --shadow: 0 1px 3px rgb(0 0 0 / 10%);
-
-    background: var(--dark);
-    color: var(--primary);
+    --empty: rgb(99 97 97 / 50%);
+    --switch: #fff;
 }
 
 body.party {
@@ -48,13 +55,33 @@ body.party {
 }
 
 @keyframes party {
-    0% { background-color: red; }
-    14% { background-color: orange; }
-    28% { background-color: yellow; }
-    42% { background-color: green; }
-    57% { background-color: blue; }
-    71% { background-color: indigo; }
-    100% { background-color: violet; }
+    0% {
+        background-color: red;
+    }
+
+    14% {
+        background-color: orange;
+    }
+
+    28% {
+        background-color: yellow;
+    }
+
+    42% {
+        background-color: green;
+    }
+
+    57% {
+        background-color: blue;
+    }
+
+    71% {
+        background-color: indigo;
+    }
+
+    100% {
+        background-color: violet;
+    }
 }
 
 #nyan-cat {
@@ -88,6 +115,24 @@ header {
     align-items: center;
 }
 
+button {
+    padding: 0.5rem;
+    border: 0.1rem solid black;
+    border-radius: 0.25rem;
+    color: var(--primary);
+    background-color: var(--light);
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+button:hover {
+    opacity: 0.5;
+}
+
+textarea {
+    resize: vertical;
+}
+
 .about-body {
     display: flex;
     flex-direction: column;
@@ -102,6 +147,22 @@ header {
     width: 30%;
     min-width: 25rem;
     max-width: 70rem;
+}
+
+.theme-toggle {
+    background-color: var(--switch);
+}
+
+.theme-icon {
+    color: var(--light);
+}
+
+.about-icon {
+    filter: invert(1);
+}
+
+.home-icon {
+    filter: invert(1);
 }
 
 .header-buttons {
@@ -209,35 +270,18 @@ header {
     font-variation-settings: "FILL" 1;
 }
 
-button {
-    padding: 0.5rem;
-    border: 0.1rem solid black;
-    border-radius: 0.25rem;
-    color: var(--primary);
-    cursor: pointer;
-    transition: 0.2s ease-in-out;
-}
-
-textarea {
-    resize: vertical;
-}
-
-button:hover {
-    opacity: 0.5;
-}
-
-.todo-list-item .button-delete {
+.todo-list-item .button-delete:hover {
     background-color: var(--danger);
 }
 
 .popup {
     position: fixed;
-    top: 50%;
+    top: 20%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 20px;
+    padding: 1rem;
     border: 1px solid #000;
-    background-color: #fff;
+    background-color: var(--light);
     z-index: 1000;
 }
 
@@ -245,20 +289,8 @@ button:hover {
     position: absolute;
     top: 0;
     right: 0;
-    padding: 10px;
+    padding: 0.5rem;
     cursor: pointer;
-}
-
-.theme-icon {
-    filter: invert(1);
-}
-
-.about-icon {
-    filter: invert(1);
-}
-
-.home-icon {
-    filter: invert(1);
 }
 
 .form-head {
